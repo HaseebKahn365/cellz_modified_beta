@@ -67,7 +67,7 @@ class GameScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(30.0),
+        padding: const EdgeInsets.fromLTRB(30.0, 50, 30, 50),
         child: GameWidget(game: MyGame()),
       ),
     );

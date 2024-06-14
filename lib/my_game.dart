@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:cellz_modified_beta/game_components/gui_dot.dart';
+import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
@@ -13,7 +15,17 @@ class MyGame extends FlameGame {
 
   @override
   FutureOr<void> onLoad() {
-    // TODO: implement onLoad
+    world.add(Dot(
+      Vector2(0, 0),
+    ));
+    world.add(Dot(
+      Vector2(100, 0),
+    ));
     return super.onLoad();
+  }
+
+  MyGame() : super() {
+    debugMode = true; // Turn on debug mode for drawing bounding boxes
+    camera = CameraComponent();
   }
 }
