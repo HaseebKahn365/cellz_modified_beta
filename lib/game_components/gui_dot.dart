@@ -1,5 +1,7 @@
 import 'dart:developer';
 
+import 'package:cellz_modified_beta/business_logic/game_canvas.dart';
+import 'package:cellz_modified_beta/business_logic/point.dart';
 import 'package:cellz_modified_beta/game_components/gui_line.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
@@ -15,14 +17,14 @@ enum LineDirection {
   right,
 }
 
-const double globalThreshold = 100;
-
 class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks {
-  final Vector2 fixedPosition;
+  Point fixedPosition; //using the concept of composition for the fixed position of the dot
   Offset? dragStart;
   Offset? dragEnd;
 
-  double radius = 15;
+  final globalThreshold = GameCanvas.globalThreshold;
+
+  double radius = 30;
 
   double dynamicRadius = 0;
 
@@ -39,7 +41,7 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks {
     size = Vector2(0, 0) + Vector2.all(radius * 2); // Set the size of the player
     center = size / 2;
 
-    position = fixedPosition;
+    position = Vector2(fixedPosition.xCord.toDouble() * 180 + 50, fixedPosition.yCord.toDouble() * 180 + 50);
   }
 
   @override
@@ -63,7 +65,7 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks {
   @override
   void onDragUpdate(DragUpdateEvent event) {
     dragEnd = event.localStartPosition.toOffset();
-    radius = 25;
+    radius = 10;
     //check if the distance between the dragStart and dragEnd is greater than the threshold then draw a line
     if ((dragEnd! - dragStart!).distance > globalThreshold) {
       LineDirection direction = getDirection(dragStart!, dragEnd!);
@@ -75,14 +77,14 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks {
           if (lineApprover(
             direction,
           )) {
-            final upLine = GuiLine(center.toOffset(), center.toOffset() - const Offset(0, globalThreshold));
+            final upLine = GuiLine(center.toOffset(), center.toOffset() - Offset(0, globalThreshold));
             add(upLine);
             log('Up line created'); //great job!
           }
 
           break;
         case LineDirection.down:
-          final downLine = GuiLine(center.toOffset(), center.toOffset() + const Offset(0, globalThreshold));
+          final downLine = GuiLine(center.toOffset(), center.toOffset() + Offset(0, globalThreshold));
           if (lineApprover(direction)) {
             add(downLine);
             log('Down line created');
@@ -90,7 +92,7 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks {
 
           break;
         case LineDirection.left:
-          final leftLine = GuiLine(center.toOffset(), center.toOffset() - const Offset(globalThreshold, 0));
+          final leftLine = GuiLine(center.toOffset(), center.toOffset() - Offset(globalThreshold, 0));
 
           if (lineApprover(direction)) {
             add(leftLine);
@@ -99,7 +101,7 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks {
 
           break;
         case LineDirection.right:
-          final rightLine = GuiLine(center.toOffset(), center.toOffset() + const Offset(globalThreshold, 0));
+          final rightLine = GuiLine(center.toOffset(), center.toOffset() + Offset(globalThreshold, 0));
 
           if (lineApprover(direction)) {
             add(rightLine);

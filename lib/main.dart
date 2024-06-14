@@ -1,7 +1,5 @@
-import 'package:flame/game.dart';
+import 'package:cellz_modified_beta/level_screens/level1.dart';
 import 'package:flutter/material.dart';
-
-import 'my_game.dart';
 
 void main() {
   runApp(const MyApp());
@@ -65,11 +63,6 @@ class GameScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(30.0, 50, 30, 50),
-        child: GameWidget(game: MyGame()),
-      ),
-    );
+    return const Scaffold(body: Level1());
   }
 }
