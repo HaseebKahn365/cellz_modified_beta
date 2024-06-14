@@ -2,16 +2,12 @@
 
 import 'dart:developer';
 
+import 'package:cellz_modified_beta/business_logic/game_state.dart';
+
 import 'point.dart';
 
 //enum to show if the line is horizontal or vertical
 enum LineDirection { horiz, vert }
-
-//Here is the Map data structure in which we will store all the lines
-Map<String, Line> linesDrawn = {};
-
-// and Here is how we store the all points in the game
-Map<int, Point> allPoints = {}; //key is the location aka the index of the point in the grid
 
 /*example 
 {
@@ -59,13 +55,13 @@ class Line {
   //before adding a line we covert it to string and check if it already exists in the Map
   bool isAlreadyLineDrawn() {
     //check for both cases ie. reverse the points and check again
-    return linesDrawn.containsKey(toString()) || linesDrawn.containsKey('${secondPoint.location}-${firstPoint.location}');
+    return GameState.linesDrawn.containsKey(toString()) || GameState.linesDrawn.containsKey('${secondPoint.location}-${firstPoint.location}');
   }
 
   //adding the line to the Map
   void addLineToMap() {
     if (!isAlreadyLineDrawn()) {
-      linesDrawn[toString()] = this;
+      GameState.linesDrawn[toString()] = this;
       log('Line added successfully!');
     }
     log('Line already exists');

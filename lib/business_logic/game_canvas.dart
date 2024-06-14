@@ -10,6 +10,8 @@ decrementMovesLeft() : decrements the number of moves left
 
  */
 
+import 'package:cellz_modified_beta/business_logic/game_state.dart';
+
 import 'lines.dart';
 import 'point.dart';
 
@@ -27,12 +29,12 @@ class GameCanvas {
   void createPoints() {
     // Make sure to empty the allPoints map before adding new points
     // Also make sure to empty the linesDrawn map
-    allPoints = {};
-    linesDrawn = {};
+    GameState.allPoints = {};
+    GameState.linesDrawn = {};
 
     for (int j = 0; j < yPoints; j++) {
       for (int i = 0; i < xPoints; i++) {
-        allPoints[j * xPoints + i] = Point(xCord: i, yCord: j, location: j * xPoints + i);
+        GameState.allPoints[j * xPoints + i] = Point(xCord: i, yCord: j, location: j * xPoints + i);
       }
     }
   }
@@ -55,8 +57,8 @@ class GameCanvas {
     //drawing horizontal lines
     for (int j = 0; j < yPoints; j++) {
       for (int i = 0; i < xPoints - 1; i++) {
-        Point? firstPoint = allPoints[j * xPoints + i];
-        Point? secondPoint = allPoints[j * xPoints + i + 1];
+        Point? firstPoint = GameState.allPoints[j * xPoints + i];
+        Point? secondPoint = GameState.allPoints[j * xPoints + i + 1];
 
         if (firstPoint != null && secondPoint != null) {
           final lineObj = Line(
@@ -71,8 +73,8 @@ class GameCanvas {
     //drawing vertical lines
     for (int i = 0; i < xPoints; i++) {
       for (int j = 0; j < yPoints - 1; j++) {
-        Point? firstPoint = allPoints[j * xPoints + i];
-        Point? secondPoint = allPoints[(j + 1) * xPoints + i];
+        Point? firstPoint = GameState.allPoints[j * xPoints + i];
+        Point? secondPoint = GameState.allPoints[(j + 1) * xPoints + i];
 
         if (firstPoint != null && secondPoint != null) {
           final lineObj = Line(

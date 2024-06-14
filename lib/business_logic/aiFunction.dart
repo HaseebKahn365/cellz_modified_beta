@@ -1,5 +1,7 @@
 //Here we are gonna define a class named as AIFunctions which will contain all the members and methods that are used for AI purposes.
 
+import 'package:cellz_modified_beta/business_logic/game_state.dart';
+
 import 'game_canvas.dart';
 import 'lines.dart';
 import 'point.dart';
@@ -21,14 +23,14 @@ class AIFunction {
 
   //fill the tempRemainingLines map with the lines that are not drawn yet
   void fillTempRemainingLines(Map<String, Line> allPossibleLines) {
-    print('actual lines drawn before call to FMC finder: ${linesDrawn.length}');
+    print('actual lines drawn before call to FMC finder: ${GameState.linesDrawn.length}');
     tempRemainingLines = {};
     allPossibleLines.forEach((key, value) {
       if (!tempAllLinesDrawn.containsKey(key)) {
         tempRemainingLines[key] = value;
       }
     });
-    print('actual lines drawn after modifying tempAllLinesDrawn but before call to FMC finder: ${linesDrawn.length}');
+    print('actual lines drawn after modifying tempAllLinesDrawn but before call to FMC finder: ${GameState.linesDrawn.length}');
   }
 
   void firstMaxChainFinder() {
@@ -52,7 +54,7 @@ class AIFunction {
     }
 
     print('Length of tempAllLinesDrawn after call to FMC finder: ${tempAllLinesDrawn.length}');
-    print('Length of linesDrawn after call to FMC finder: ${linesDrawn.length}');
+    print('Length of linesDrawn after call to FMC finder: ${GameState.linesDrawn.length}');
   }
 
   bool checkSquare2(Line line) {
@@ -61,8 +63,8 @@ class AIFunction {
       Point p2 = line.secondPoint;
 
       Point? p3, p4;
-      p3 = allPoints[p1.location - gameCanvas.xPoints];
-      p4 = allPoints[p2.location - gameCanvas.xPoints];
+      p3 = GameState.allPoints[p1.location - gameCanvas.xPoints];
+      p4 = GameState.allPoints[p2.location - gameCanvas.xPoints];
 
       Line topHoriz, bottomHoriz, leftVert, rightVert;
       if (p3 != null && p4 != null) {
@@ -77,8 +79,8 @@ class AIFunction {
         }
       }
 
-      p3 = allPoints[p1.location + gameCanvas.xPoints];
-      p4 = allPoints[p2.location + gameCanvas.xPoints];
+      p3 = GameState.allPoints[p1.location + gameCanvas.xPoints];
+      p4 = GameState.allPoints[p2.location + gameCanvas.xPoints];
 
       if (p3 != null && p4 != null) {
         bottomHoriz = Line(firstPoint: p3, secondPoint: p4);
@@ -96,8 +98,8 @@ class AIFunction {
       Point p2 = line.secondPoint;
 
       Point? p3, p4;
-      p3 = allPoints[p1.location - 1];
-      p4 = allPoints[p2.location - 1];
+      p3 = GameState.allPoints[p1.location - 1];
+      p4 = GameState.allPoints[p2.location - 1];
 
       Line rightVert, leftVert, topHoriz, bottomHoriz;
       if (p3 != null && p4 != null) {
@@ -113,8 +115,8 @@ class AIFunction {
         }
       }
 
-      p3 = allPoints[p1.location + 1];
-      p4 = allPoints[p2.location + 1];
+      p3 = GameState.allPoints[p1.location + 1];
+      p4 = GameState.allPoints[p2.location + 1];
 
       if (p3 != null && p4 != null) {
         leftVert = Line(firstPoint: p1, secondPoint: p3);
@@ -139,9 +141,9 @@ class AIFunction {
       // adding null safety
       Point p3, p4;
       Line topHoriz, bottomHoriz;
-      if (allPoints[p1.location - 1] != null && allPoints[p2.location - 1] != null) {
-        p3 = allPoints[p1.location - 1]!;
-        p4 = allPoints[p2.location - 1]!;
+      if (GameState.allPoints[p1.location - 1] != null && GameState.allPoints[p2.location - 1] != null) {
+        p3 = GameState.allPoints[p1.location - 1]!;
+        p4 = GameState.allPoints[p2.location - 1]!;
 
         topHoriz = Line(firstPoint: p3, secondPoint: p1);
         bottomHoriz = Line(firstPoint: p4, secondPoint: p2);
@@ -162,9 +164,9 @@ class AIFunction {
         }
       }
 
-      if (allPoints[p1.location + 1] != null && allPoints[p2.location + 1] != null) {
-        p3 = allPoints[p1.location + 1]!;
-        p4 = allPoints[p2.location + 1]!;
+      if (GameState.allPoints[p1.location + 1] != null && GameState.allPoints[p2.location + 1] != null) {
+        p3 = GameState.allPoints[p1.location + 1]!;
+        p4 = GameState.allPoints[p2.location + 1]!;
 
         topHoriz = Line(firstPoint: p1, secondPoint: p3);
         bottomHoriz = Line(firstPoint: p2, secondPoint: p4);
@@ -191,9 +193,9 @@ class AIFunction {
       Point p3, p4;
       Line leftVert, rightVert;
 
-      if (allPoints[p1.location - gameCanvas.xPoints] != null && allPoints[p2.location - gameCanvas.xPoints] != null) {
-        p3 = allPoints[p1.location - gameCanvas.xPoints]!;
-        p4 = allPoints[p2.location - gameCanvas.xPoints]!;
+      if (GameState.allPoints[p1.location - gameCanvas.xPoints] != null && GameState.allPoints[p2.location - gameCanvas.xPoints] != null) {
+        p3 = GameState.allPoints[p1.location - gameCanvas.xPoints]!;
+        p4 = GameState.allPoints[p2.location - gameCanvas.xPoints]!;
 
         leftVert = Line(firstPoint: p3, secondPoint: p1);
         rightVert = Line(firstPoint: p4, secondPoint: p2);
@@ -214,9 +216,9 @@ class AIFunction {
         }
       }
 
-      if (allPoints[p1.location + gameCanvas.xPoints] != null && allPoints[p2.location + gameCanvas.xPoints] != null) {
-        p3 = allPoints[p1.location + gameCanvas.xPoints]!;
-        p4 = allPoints[p2.location + gameCanvas.xPoints]!;
+      if (GameState.allPoints[p1.location + gameCanvas.xPoints] != null && GameState.allPoints[p2.location + gameCanvas.xPoints] != null) {
+        p3 = GameState.allPoints[p1.location + gameCanvas.xPoints]!;
+        p4 = GameState.allPoints[p2.location + gameCanvas.xPoints]!;
 
         leftVert = Line(firstPoint: p1, secondPoint: p3);
         rightVert = Line(firstPoint: p2, secondPoint: p4);
