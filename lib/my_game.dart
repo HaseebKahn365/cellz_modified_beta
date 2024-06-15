@@ -3,9 +3,7 @@ import 'dart:async';
 import 'package:cellz_modified_beta/business_logic/game_canvas.dart';
 import 'package:cellz_modified_beta/business_logic/game_state.dart';
 import 'package:cellz_modified_beta/game_components/gui_dot.dart';
-import 'package:flame/camera.dart';
 import 'package:flame/components.dart';
-import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
@@ -39,7 +37,7 @@ class MyGame extends FlameGame {
     });
   }
 
-  @override
+  // @override
   // void onLongTapDown(TapDownEvent event) {
   //   final tapPosition = event.localPosition;
   //   camera.viewfinder.position = tapPosition - appropriateOffset;
@@ -47,7 +45,7 @@ class MyGame extends FlameGame {
   //   super.onLongTapDown(event);
   // }
 
-  double zoomAmount = 1;
+  // double zoomAmount = 1;
   //add a smooth zoom in effect
   // Assuming this method is called repeatedly over time
   // void updateZoomAmount() async {
