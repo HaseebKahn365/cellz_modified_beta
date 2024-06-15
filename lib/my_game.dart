@@ -3,63 +3,75 @@ import 'dart:async';
 import 'package:cellz_modified_beta/business_logic/game_canvas.dart';
 import 'package:cellz_modified_beta/business_logic/game_state.dart';
 import 'package:cellz_modified_beta/game_components/gui_dot.dart';
+import 'package:flame/camera.dart';
 import 'package:flame/components.dart';
+import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
-class MyGame extends FlameGame {
+class MyGame extends FlameGame with DoubleTapCallbacks, TapCallbacks, ScaleDetector {
   final int xP, yP;
+  Vector2 appropriateOffset = Vector2(0, 0);
 
   late final GameCanvas level1Canvas;
 
-  MyGame({required this.xP, required this.yP}) {
+  MyGame({required this.xP, required this.yP, required this.appropriateOffset})
+      : super(
+          camera: CameraComponent.withFixedResolution(width: 600, height: 1000),
+        ) {
     debugMode = true;
-    camera = CameraComponent();
     level1Canvas = GameCanvas(xPoints: xP, yPoints: yP);
     level1Canvas.createPoints();
   }
 
   @override
   Color backgroundColor() {
-    return Colors.blueGrey;
+    return Colors.black;
   }
-
-  //OnLoad we should add all the dots of the grid
 
   @override
-  FutureOr<void> onLoad() {
-    //adding all the dots to the game using the list of allPoints
+  FutureOr<void> onLoad() async {
+    camera.viewfinder.anchor = Anchor.topLeft;
+    // Adding all the dots to the game using the list of allPoints
     GameState.allPoints.forEach((key, value) {
-      add(Dot(value));
+      world.add(Dot(value));
+      world.debugColor = Colors.white;
     });
-    return super.onLoad();
-  }
-}
-
-
-//use the following canvas information to construct the grid
-/*GameCanvas gameCanvas = GameCanvas(xPoints: 4, yPoints: 4);
-
-class GameCanvas {
-  static double globalThreshold = 100;
-  int xPoints;
-  int yPoints;
-  late int movesLeft;
-  GameCanvas({required this.xPoints, required this.yPoints}) {
-    createPoints();
-    calculateMovesLeft();
   }
 
-  void createPoints() {
-    // Make sure to empty the allPoints map before adding new points
-    // Also make sure to empty the linesDrawn map
-    GameState.allPoints = {};
-    GameState.linesDrawn = {};
+  @override
+  void onLongTapDown(TapDownEvent event) {
+    final tapPosition = event.localPosition;
+    camera.viewfinder.position = tapPosition - appropriateOffset;
+    updateZoomAmount(); // Increase the zoom level by 20%
+    super.onLongTapDown(event);
+  }
 
-    for (int j = 0; j < yPoints; j++) {
-      for (int i = 0; i < xPoints; i++) {
-        GameState.allPoints[j * xPoints + i] = Point(xCord: i, yCord: j, location: j * xPoints + i);
-      }
+  double zoomAmount = 1;
+  //add a smooth zoom in effect
+  // Assuming this method is called repeatedly over time
+  void updateZoomAmount() async {
+    const double maxZoom = 2.2; // Target zoom level
+    const double rateOfChange = 1.2 / 120; // How much to zoom each step
+    const int delayMilliseconds = 5; // Delay between updates to simulate smooth zooming
+
+    // Use a timer to gradually increase zoomAmount
+    while (zoomAmount < maxZoom) {
+      await Future.delayed(const Duration(milliseconds: delayMilliseconds), () {
+        zoomAmount += rateOfChange;
+
+        camera.viewfinder.zoom = zoomAmount;
+      });
     }
   }
- */
+
+  @override
+  void onScaleUpdate(ScaleUpdateInfo info) {
+    camera.viewfinder.zoom = 1;
+    zoomAmount = 1;
+    print('Zoom: ${info.scale.global}');
+    super.onScaleUpdate(info);
+  }
+
+  // Call updateZoomAmount() from your game loop or an event handler to smoothly increase the zoom
+}

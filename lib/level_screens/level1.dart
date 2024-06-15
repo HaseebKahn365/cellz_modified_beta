@@ -7,12 +7,12 @@ class Level1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 70, vertical: 300),
+    return GestureDetector(
       child: GameWidget(
           game: MyGame(
-        xP: 2,
-        yP: 2,
+        appropriateOffset: Vector2(200, 200),
+        xP: 6,
+        yP: 6,
       )),
     );
   }
