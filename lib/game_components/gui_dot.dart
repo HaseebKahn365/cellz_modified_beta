@@ -64,8 +64,9 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks {
 
   @override
   void onDragUpdate(DragUpdateEvent event) {
+    isDragging = true;
     dragEnd = event.localStartPosition.toOffset();
-    radius = 10;
+
     //check if the distance between the dragStart and dragEnd is greater than the threshold then draw a line
     if ((dragEnd! - dragStart!).distance > globalThreshold * 1.5) {
       LineDirection direction = getDirection(dragStart!, dragEnd!);
@@ -111,6 +112,7 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks {
           break;
       }
       dragEnd = null; //to make sure we don't visualize the drag line after the line is created
+      isDragging = false;
     }
 
     super.onDragUpdate(event);
@@ -119,10 +121,41 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks {
   @override
   void onDragEnd(DragEndEvent event) {
     //temporarily creating a new line
+    isDragging = false;
 
     dragEnd = null;
 
     super.onDragEnd(event);
+  }
+
+  double maxRadius = 20.0; // Maximum dynamic radius
+  double scaleSpeed = 40.0; // Speed of scaling
+  bool isDragging = false; // Flag to track if the dot is being dragged
+
+  void update(double dt) {
+    if (isDragging) {
+      // Scale up the radius until it reaches maxRadius
+      radius += scaleSpeed * dt;
+      if (radius > maxRadius) {
+        radius = maxRadius;
+      }
+    } else {
+      // Scale down the radius until it reaches the initial size
+      if (radius > 10.0) {
+        radius -= scaleSpeed * dt;
+        if (radius < 10.0) {
+          radius = 10.0;
+        }
+      }
+    }
+  }
+
+  void startDragging() {
+    isDragging = true;
+  }
+
+  void stopDragging() {
+    isDragging = false;
   }
 
   final dragCoefficient = 0.4; //this is for adding a delay gap to the drag offset
