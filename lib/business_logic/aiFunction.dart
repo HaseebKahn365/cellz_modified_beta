@@ -1,117 +1,224 @@
-//Here we are gonna define a class named as AIFunctions which will contain all the members and methods that are used for AI purposes.
+import 'dart:math';
 
 import 'package:cellz_modified_beta/business_logic/game_state.dart';
-
-import 'game_canvas.dart';
-import 'lines.dart';
+import 'package:cellz_modified_beta/business_logic/lines.dart';
+import 'package:cellz_modified_beta/business_logic/square.dart';
+import 'package:cellz_modified_beta/game_components/gui_line_for_ai.dart';
+import 'package:cellz_modified_beta/game_components/gui_square.dart';
+import 'package:flame/game.dart';
 import 'point.dart';
-import 'square.dart';
+import 'dart:developer' as dev;
 
 class AIFunction {
-  Map<String, Line> tempAllLinesDrawn = {}; //internally drawn lines by the AI Function
-  List<Line> firstMaxSquareChain = []; //this contains a list of lines that can be drawn successively to create a chain of square and get big scores
-  Map<String, Line> tempRemainingLines = {}; //this contains the remaining lines. this map can be altered by the aifunction internally without affecting the actual remaining lines
-  Map<String, Line> tempAllPossibleLines = {}; //this contains all the possible lines that can be drawn.
-  List<Square> tempFirstChainSquaresOwned = []; //this contains all the squares that are owned by the ai. this list can be altered by the aifunction internally without affecting the actual squares in the game.
-  Map<String, Line> safeLines = {}; //this contains all the safe lines that can be drawn by the ai. this list can be altered by the aifunction internally without affecting the actual safe lines in the game.
-  //tempFirstChainSquaresOwned is just used to check if the length of the firstMaxSquareChain will match the length of the tempFirstChainSquaresOwned list
+  Set<Line> tempLinesDrawn = {};
+  Set<Line> tempRemainingLines = {};
+  Set<Line> firstMaxSquareChainLines = {};
+  Set<Line> safeLines = {};
+  Set<Line> readyMoves = {};
 
-  void newGameState({required Map<String, Line> linesDrawnInGame, required Map<String, Line> allPossibleLines}) {
-    tempAllLinesDrawn = Map<String, Line>.from(linesDrawnInGame); // create a deep copy of the linesDrawn map
-    fillTempRemainingLines(allPossibleLines);
-  }
+  Future<void> buildReadyLines(FlameGame gameRef) async {
+    print('The state of game after call to buildReadyLines: Lines : ${GameState.linesDrawn.length} Points: ${GameState.allPoints.length}');
 
-  //fill the tempRemainingLines map with the lines that are not drawn yet
-  void fillTempRemainingLines(Map<String, Line> allPossibleLines) {
-    print('actual lines drawn before call to FMC finder: ${GameState.linesDrawn.length}');
-    tempRemainingLines = {};
-    allPossibleLines.forEach((key, value) {
-      if (!tempAllLinesDrawn.containsKey(key)) {
-        tempRemainingLines[key] = value;
-      }
-    });
-    print('actual lines drawn after modifying tempAllLinesDrawn but before call to FMC finder: ${GameState.linesDrawn.length}');
-  }
+    tempLinesDrawn.clear();
+    tempRemainingLines.clear();
+    firstMaxSquareChainLines.clear();
+    readyMoves.clear();
 
-  void firstMaxChainFinder() {
-    List<String> keysToRemove = [];
-    print('actual lines drawn before FMC starts action : ${tempAllLinesDrawn.length}');
-    tempRemainingLines.forEach((key, remainingLine) {
-      if (checkSquare2(remainingLine)) {
-        tempAllLinesDrawn[key] = remainingLine;
-        keysToRemove.add(key);
-        firstMaxSquareChain.add(remainingLine);
-      }
-    });
+    print('The length of tempLinesDrawn is: ${tempLinesDrawn.length}');
+    print('The length of tempRemainingLines is: ${tempRemainingLines.length}');
+    print('The length of linesDrawn is: ${GameState.linesDrawn.length}');
+    print('The length of validLines is: ${GameState.validLines.length}');
 
-    for (String key in keysToRemove) {
-      tempRemainingLines.remove(key);
+    print('Initializing the tempLinesDrawn and tempRemainingLines');
+    initTheSets();
+
+    //! Testing that the union of tempLinesDrawn and tempRemainingLines is equal to the validLines
+    print('The length of the union of tempLinesDrawn and tempRemainingLines is: ${tempLinesDrawn.union(tempRemainingLines).length}');
+    //! Testing that the intersection of tempLinesDrawn and tempRemainingLines is empty
+    print('The length of the intersection of tempLinesDrawn and tempRemainingLines is: ${tempLinesDrawn.intersection(tempRemainingLines).length}');
+
+    print('The length of firstMaxSquareChainLines is: ${firstMaxSquareChainLines.length}');
+    print('Following lines are in the firstMaxSquareChainLines: $firstMaxSquareChainLines');
+    print('The length of tempLinesDrawn is: ${tempLinesDrawn.length}');
+    print('The length of tempRemainingLines is: ${tempRemainingLines.length}');
+    print('The state of game after call to buildReadyLines: Lines : ${GameState.linesDrawn.length} Points: ${GameState.allPoints.length}');
+
+    //Now lets call the checkSquare method and see if it works for every line in the tempLinesDrawn
+    try {
+      fillFirstMaxSquareChain(tempLinesDrawn, tempRemainingLines);
+    } catch (e) {
+      print('Error in fillFirstMaxSquareChain: $e');
     }
 
-    // Call the method recursively after the map has been modified
-    if (keysToRemove.isNotEmpty) {
-      firstMaxChainFinder();
+    print('The length of firstMaxSquareChainLines is: ${firstMaxSquareChainLines.length}');
+    print('Following lines are in the firstMaxSquareChainLines: $firstMaxSquareChainLines');
+    print('The length of tempLinesDrawn is: ${tempLinesDrawn.length}');
+    print('The length of tempRemainingLines is: ${tempRemainingLines.length}');
+    print('The state of game after call to buildReadyLines: Lines : ${GameState.linesDrawn.length} Points: ${GameState.allPoints.length}');
+
+    //now lets find the safeLines
+    print('Before findSafeLines: tempLinesDrawn: ${tempLinesDrawn.length} tempRemainingLines: ${tempRemainingLines.length} and safeLines: ${safeLines.length}');
+    findSafeLines();
+    print('After findSafeLines: tempLinesDrawn: ${tempLinesDrawn.length} tempRemainingLines: ${tempRemainingLines.length} and safeLines: ${safeLines.length}');
+
+    //now lets get the moves ready for the ai.
+    /*
+    we check if the length of the firstMaxSquareChain is greater that 2, add these to the readyMoves, then we have to check for all the safelines.
+  then we check if the safelines isNotEmpty. if its not empty, then append a safeline the to the readyMoves list.
+  in case if the safelines is empty, then we need to remove the second last line from the readyMoves.
+  if the firstMaxSquareChain is less than 2, then add the firstMaxSquareChainLines to the readyMoves list, then append a random safeLine to the firstMaxSquareChainLines. 
+   */
+
+    int getProperRandIndex() {
+      final int randomIndex = Random().nextInt(safeLines.length);
+      if (safeLines.length == 1) return 0;
+      if (!readyMoves.contains(safeLines.elementAt(randomIndex))) {
+        return randomIndex;
+      } else {
+        return getProperRandIndex();
+      }
     }
 
-    print('Length of tempAllLinesDrawn after call to FMC finder: ${tempAllLinesDrawn.length}');
-    print('Length of linesDrawn after call to FMC finder: ${GameState.linesDrawn.length}');
+    try {
+      if (firstMaxSquareChainLines.length > 2) {
+        readyMoves.addAll(firstMaxSquareChainLines);
+        if (safeLines.isNotEmpty) {
+          readyMoves.add(safeLines.elementAt(getProperRandIndex()));
+        } else {
+          if (tempRemainingLines.isNotEmpty) {
+            readyMoves.remove(readyMoves.elementAt(readyMoves.length - 2));
+          }
+        }
+      } else {
+        readyMoves.addAll(firstMaxSquareChainLines);
+        if (safeLines.isNotEmpty) {
+          readyMoves.add(safeLines.elementAt(getProperRandIndex()));
+        } else {
+          readyMoves.add(tempRemainingLines.last);
+        }
+      }
+    } catch (e) {
+      print('Error in buildReadyLines: $e');
+    }
+
+    print('The length of readyMoves is: ${readyMoves.length}');
+    print('The following are all the readyMoves: $readyMoves');
+
+    // Now that the moves are ready: we need to draw the lines, add each line to the GameState using the addToMap method on each line.
+    for (Line line in readyMoves) {
+      // creating GUI line
+      final GuiLineForAi guiLine = GuiLineForAi(firstPoint: line.firstPoint, secondPoint: line.secondPoint);
+      // adding the line to the world
+      await Future.delayed(const Duration(milliseconds: 100), () {
+        line.addLineToMap();
+        gameRef.world.add(guiLine);
+
+        // Check for any squares formed by the current line
+        Map<String, Square> newSquares = line.checkSquare();
+        if (newSquares.isNotEmpty) {
+          newSquares.forEach((key, square) {
+            final guiSquare = GuiSquare(
+              isMine: GameState.myTurn,
+              myXcord: square.xCord,
+              myYcord: square.yCord,
+            );
+            gameRef.world.add(guiSquare);
+          });
+        }
+      });
+    }
+    dev.log('AI has done its job but the isMyTurn: ${GameState.myTurn}');
   }
 
-  bool checkSquare2(Line line) {
-    if (line.direction == LineDirection.horiz) {
-      Point p1 = line.firstPoint;
-      Point p2 = line.secondPoint;
+  void initTheSets() {
+    tempLinesDrawn.addAll(GameState.linesDrawn.values);
 
-      Point? p3, p4;
-      p3 = GameState.allPoints[p1.location - gameCanvas.xPoints];
-      p4 = GameState.allPoints[p2.location - gameCanvas.xPoints];
+    GameState.validLines.forEach((key, line) {
+      if (!GameState.linesDrawn.containsKey(key)) {
+        tempRemainingLines.add(line);
+      }
+    });
 
-      Line topHoriz, bottomHoriz, leftVert, rightVert;
+    print('After initTheSets:');
+    print('tempLinesDrawn: $tempLinesDrawn');
+    print('tempRemainingLines: $tempRemainingLines');
+  }
+
+  //creating a recursive function for to find the lines for the firstSquareChain.
+  /*
+  The firstMaxSquareChainLines are a series of lines that when drawn in order will form a series of squares in sucession 
+   */
+
+  void fillFirstMaxSquareChain(Set<Line> tmpLnsDrwn, Set<Line> tmpRemLns) {
+    int num = tmpRemLns.length;
+    for (int i = 0; i < num; i++) {
+      //go through every line in tmpRemLns and if the checkSquare returns true for it then add this line to the tmpLnsDrwn and remove it from the tmpRemLns and recursively call the fillFirstMaxSquareChain again
+      Line line = tmpRemLns.elementAt(i);
+      if (checkSquare(line)) {
+        //also add the line to the firstMaxSquareChainLines
+        firstMaxSquareChainLines.add(line);
+        tmpLnsDrwn.add(line);
+        tmpRemLns.remove(line);
+        fillFirstMaxSquareChain(tmpLnsDrwn, tmpRemLns); //Set was a better option than List or Map because it allowed us for indexing and unique values
+        break;
+      }
+    }
+  }
+
+  // Adapted checkSquare method for AI
+  bool checkSquare(Line line) {
+    // Map<String, Square> squares = {};
+    bool squareFound = false;
+
+    Point p1 = line.firstPoint;
+    Point p2 = line.secondPoint;
+
+    // Determine if the line is horizontal or vertical
+    bool isHorizontal = p1.yCord == p2.yCord;
+
+    if (isHorizontal) {
+      // Check for the square above the line
+      Point? p3 = GameState.allPoints[p1.location - GameState.gameCanvas.xPoints];
+      Point? p4 = GameState.allPoints[p2.location - GameState.gameCanvas.xPoints];
+
       if (p3 != null && p4 != null) {
-        topHoriz = Line(firstPoint: p3, secondPoint: p4);
-        leftVert = Line(firstPoint: p3, secondPoint: p1);
-        rightVert = Line(firstPoint: p4, secondPoint: p2);
+        Line topHoriz = Line(firstPoint: p3, secondPoint: p4);
+        Line leftVert = Line(firstPoint: p3, secondPoint: p1);
+        Line rightVert = Line(firstPoint: p4, secondPoint: p2);
 
-        if (tempAllLinesDrawn.containsKey(topHoriz.toString()) && tempAllLinesDrawn.containsKey(leftVert.toString()) && tempAllLinesDrawn.containsKey(rightVert.toString())) {
-          // also add the square to the tempFirstChainSquaresOwned list
-          tempFirstChainSquaresOwned.add(Square(topHoriz: topHoriz, bottomHoriz: line, leftVert: leftVert, rightVert: rightVert, isMine: false));
-          return true;
+        if (tempLinesDrawn.contains(topHoriz) && tempLinesDrawn.contains(leftVert) && tempLinesDrawn.contains(rightVert)) {
+          squareFound = true;
+          // Add square to local collection
         }
       }
 
-      p3 = GameState.allPoints[p1.location + gameCanvas.xPoints];
-      p4 = GameState.allPoints[p2.location + gameCanvas.xPoints];
+      // Check for the square below the line
+      p3 = GameState.allPoints[p1.location + GameState.gameCanvas.xPoints];
+      p4 = GameState.allPoints[p2.location + GameState.gameCanvas.xPoints];
 
       if (p3 != null && p4 != null) {
-        bottomHoriz = Line(firstPoint: p3, secondPoint: p4);
-        leftVert = Line(firstPoint: p1, secondPoint: p3);
-        rightVert = Line(firstPoint: p2, secondPoint: p4);
+        Line bottomHoriz = Line(firstPoint: p3, secondPoint: p4);
+        Line leftVert = Line(firstPoint: p1, secondPoint: p3);
+        Line rightVert = Line(firstPoint: p2, secondPoint: p4);
 
-        if (tempAllLinesDrawn.containsKey(bottomHoriz.toString()) && tempAllLinesDrawn.containsKey(leftVert.toString()) && tempAllLinesDrawn.containsKey(rightVert.toString())) {
-          // also add the square to the tempFirstChainSquaresOwned list
-          tempFirstChainSquaresOwned.add(Square(topHoriz: line, bottomHoriz: bottomHoriz, leftVert: leftVert, rightVert: rightVert, isMine: false));
-          return true;
+        if (tempLinesDrawn.contains(bottomHoriz) && tempLinesDrawn.contains(leftVert) && tempLinesDrawn.contains(rightVert)) {
+          squareFound = true;
+          // Add square to local collection
         }
       }
     } else {
-      Point p1 = line.firstPoint;
-      Point p2 = line.secondPoint;
+      // Vertical line: Check left and right squares
+      Point? p3 = GameState.allPoints[p1.location - 1];
+      Point? p4 = GameState.allPoints[p2.location - 1];
 
-      Point? p3, p4;
-      p3 = GameState.allPoints[p1.location - 1];
-      p4 = GameState.allPoints[p2.location - 1];
-
-      Line rightVert, leftVert, topHoriz, bottomHoriz;
       if (p3 != null && p4 != null) {
-        rightVert = Line(firstPoint: p3, secondPoint: p4);
-        leftVert = Line(firstPoint: p3, secondPoint: p1);
-        topHoriz = Line(firstPoint: p3, secondPoint: p1);
-        bottomHoriz = Line(firstPoint: p4, secondPoint: p2);
+        Line leftVert = Line(firstPoint: p3, secondPoint: p4);
+        Line topHoriz = Line(firstPoint: p3, secondPoint: p1);
+        Line bottomHoriz = Line(firstPoint: p4, secondPoint: p2);
 
-        if (tempAllLinesDrawn.containsKey(leftVert.toString()) && tempAllLinesDrawn.containsKey(topHoriz.toString()) && tempAllLinesDrawn.containsKey(bottomHoriz.toString())) {
-          // also add the square to the tempFirstChainSquaresOwned list
-          tempFirstChainSquaresOwned.add(Square(topHoriz: topHoriz, bottomHoriz: bottomHoriz, leftVert: leftVert, rightVert: line, isMine: false));
-          return true;
+        if (tempLinesDrawn.contains(leftVert) && tempLinesDrawn.contains(topHoriz) && tempLinesDrawn.contains(bottomHoriz)) {
+          squareFound = true;
+          // Add square to local collection
         }
       }
 
@@ -119,135 +226,129 @@ class AIFunction {
       p4 = GameState.allPoints[p2.location + 1];
 
       if (p3 != null && p4 != null) {
-        leftVert = Line(firstPoint: p1, secondPoint: p3);
-        rightVert = Line(firstPoint: p3, secondPoint: p4);
-        topHoriz = Line(firstPoint: p1, secondPoint: p3);
-        bottomHoriz = Line(firstPoint: p2, secondPoint: p4);
+        Line rightVert = Line(firstPoint: p3, secondPoint: p4);
+        Line topHoriz = Line(firstPoint: p1, secondPoint: p3);
+        Line bottomHoriz = Line(firstPoint: p2, secondPoint: p4);
 
-        if (tempAllLinesDrawn.containsKey(rightVert.toString()) && tempAllLinesDrawn.containsKey(topHoriz.toString()) && tempAllLinesDrawn.containsKey(bottomHoriz.toString())) {
-          // also add the square to the tempFirstChainSquaresOwned list
-          tempFirstChainSquaresOwned.add(Square(topHoriz: topHoriz, bottomHoriz: bottomHoriz, leftVert: line, rightVert: rightVert, isMine: false));
-          return true;
+        if (tempLinesDrawn.contains(rightVert) && tempLinesDrawn.contains(topHoriz) && tempLinesDrawn.contains(bottomHoriz)) {
+          squareFound = true;
+          // Add square to local collection
         }
       }
     }
-    return false;
+
+    return squareFound;
   }
 
+//now we need to find the safeLines
+/*
+we will need safelines to be able to draw a line that will not allow the opponent to complete a square
+ */
+
+//! method to find all the safelines:
+  void findSafeLines() {
+    safeLines.clear();
+    for (Line line in tempRemainingLines) {
+      if (checkSafeLine(line)) {
+        safeLines.add(line);
+      }
+    }
+  }
+
+//! method to check if a line is safe
   bool checkSafeLine(Line line) {
     if (line.direction == LineDirection.vert) {
       Point p1 = line.firstPoint;
       Point p2 = line.secondPoint;
-      // adding null safety
-      Point p3, p4;
-      Line topHoriz, bottomHoriz;
-      if (GameState.allPoints[p1.location - 1] != null && GameState.allPoints[p2.location - 1] != null) {
-        p3 = GameState.allPoints[p1.location - 1]!;
-        p4 = GameState.allPoints[p2.location - 1]!;
+      Point? p3, p4;
+      Line? topHoriz, bottomHoriz;
 
+      // Check left side
+      p3 = GameState.allPoints[p1.location - 1];
+      p4 = GameState.allPoints[p2.location - 1];
+      if (p3 != null && p4 != null) {
         topHoriz = Line(firstPoint: p3, secondPoint: p1);
         bottomHoriz = Line(firstPoint: p4, secondPoint: p2);
 
-        if (tempAllLinesDrawn.containsKey(topHoriz.toString()) && tempAllLinesDrawn.containsKey(bottomHoriz.toString())) {
+        if (tempLinesDrawn.contains(topHoriz) && tempLinesDrawn.contains(bottomHoriz)) {
           return false;
         }
 
-        //creating leftVert and checking if leftVert and topHoriz are already drawn
         Line leftVert = Line(firstPoint: p3, secondPoint: p4);
-        if (tempAllLinesDrawn.containsKey(leftVert.toString()) && tempAllLinesDrawn.containsKey(topHoriz.toString())) {
+        if (tempLinesDrawn.contains(leftVert) && tempLinesDrawn.contains(topHoriz)) {
           return false;
         }
-
-        //checking if leftVert and bottomHoriz are already drawn
-        if (tempAllLinesDrawn.containsKey(leftVert.toString()) && tempAllLinesDrawn.containsKey(bottomHoriz.toString())) {
+        if (tempLinesDrawn.contains(leftVert) && tempLinesDrawn.contains(bottomHoriz)) {
           return false;
         }
       }
 
-      if (GameState.allPoints[p1.location + 1] != null && GameState.allPoints[p2.location + 1] != null) {
-        p3 = GameState.allPoints[p1.location + 1]!;
-        p4 = GameState.allPoints[p2.location + 1]!;
-
+      // Check right side
+      p3 = GameState.allPoints[p1.location + 1];
+      p4 = GameState.allPoints[p2.location + 1];
+      if (p3 != null && p4 != null) {
         topHoriz = Line(firstPoint: p1, secondPoint: p3);
         bottomHoriz = Line(firstPoint: p2, secondPoint: p4);
 
-        if (tempAllLinesDrawn.containsKey(topHoriz.toString()) && tempAllLinesDrawn.containsKey(bottomHoriz.toString())) {
+        if (tempLinesDrawn.contains(topHoriz) && tempLinesDrawn.contains(bottomHoriz)) {
           return false;
         }
 
-        //creating rightVert and checking if rightVert and topHoriz are already drawn
         Line rightVert = Line(firstPoint: p3, secondPoint: p4);
-        if (tempAllLinesDrawn.containsKey(rightVert.toString()) && tempAllLinesDrawn.containsKey(topHoriz.toString())) {
+        if (tempLinesDrawn.contains(rightVert) && tempLinesDrawn.contains(topHoriz)) {
           return false;
         }
-
-        //checking if rightVert and bottomHoriz are already drawn
-        if (tempAllLinesDrawn.containsKey(rightVert.toString()) && tempAllLinesDrawn.containsKey(bottomHoriz.toString())) {
+        if (tempLinesDrawn.contains(rightVert) && tempLinesDrawn.contains(bottomHoriz)) {
           return false;
         }
       }
     } else {
-      //Line is horizontal
+      // Line is horizontal
       Point p1 = line.firstPoint;
       Point p2 = line.secondPoint;
-      Point p3, p4;
-      Line leftVert, rightVert;
+      Point? p3, p4;
+      Line? leftVert, rightVert;
 
-      if (GameState.allPoints[p1.location - gameCanvas.xPoints] != null && GameState.allPoints[p2.location - gameCanvas.xPoints] != null) {
-        p3 = GameState.allPoints[p1.location - gameCanvas.xPoints]!;
-        p4 = GameState.allPoints[p2.location - gameCanvas.xPoints]!;
-
+      // Check top side
+      p3 = GameState.allPoints[p1.location - GameState.gameCanvas.xPoints];
+      p4 = GameState.allPoints[p2.location - GameState.gameCanvas.xPoints];
+      if (p3 != null && p4 != null) {
         leftVert = Line(firstPoint: p3, secondPoint: p1);
         rightVert = Line(firstPoint: p4, secondPoint: p2);
 
-        if (tempAllLinesDrawn.containsKey(leftVert.toString()) && tempAllLinesDrawn.containsKey(rightVert.toString())) {
+        if (tempLinesDrawn.contains(leftVert) && tempLinesDrawn.contains(rightVert)) {
           return false;
         }
 
-        //creating topHoriz and checking if topHoriz and leftVert are already drawn
         Line topHoriz = Line(firstPoint: p3, secondPoint: p4);
-        if (tempAllLinesDrawn.containsKey(topHoriz.toString()) && tempAllLinesDrawn.containsKey(leftVert.toString())) {
+        if (tempLinesDrawn.contains(topHoriz) && tempLinesDrawn.contains(leftVert)) {
           return false;
         }
-
-        //checking if topHoriz and rightVert are already drawn
-        if (tempAllLinesDrawn.containsKey(topHoriz.toString()) && tempAllLinesDrawn.containsKey(rightVert.toString())) {
+        if (tempLinesDrawn.contains(topHoriz) && tempLinesDrawn.contains(rightVert)) {
           return false;
         }
       }
 
-      if (GameState.allPoints[p1.location + gameCanvas.xPoints] != null && GameState.allPoints[p2.location + gameCanvas.xPoints] != null) {
-        p3 = GameState.allPoints[p1.location + gameCanvas.xPoints]!;
-        p4 = GameState.allPoints[p2.location + gameCanvas.xPoints]!;
-
+      // Check bottom side
+      p3 = GameState.allPoints[p1.location + GameState.gameCanvas.xPoints];
+      p4 = GameState.allPoints[p2.location + GameState.gameCanvas.xPoints];
+      if (p3 != null && p4 != null) {
         leftVert = Line(firstPoint: p1, secondPoint: p3);
         rightVert = Line(firstPoint: p2, secondPoint: p4);
 
-        if (tempAllLinesDrawn.containsKey(leftVert.toString()) && tempAllLinesDrawn.containsKey(rightVert.toString())) {
+        if (tempLinesDrawn.contains(leftVert) && tempLinesDrawn.contains(rightVert)) {
           return false;
         }
 
-        //creating bottomHoriz and checking if bottomHoriz and leftVert are already drawn
         Line bottomHoriz = Line(firstPoint: p3, secondPoint: p4);
-        if (tempAllLinesDrawn.containsKey(bottomHoriz.toString()) && tempAllLinesDrawn.containsKey(leftVert.toString())) {
+        if (tempLinesDrawn.contains(bottomHoriz) && tempLinesDrawn.contains(leftVert)) {
           return false;
         }
-
-        //checking if bottomHoriz and rightVert are already drawn
-        if (tempAllLinesDrawn.containsKey(bottomHoriz.toString()) && tempAllLinesDrawn.containsKey(rightVert.toString())) {
+        if (tempLinesDrawn.contains(bottomHoriz) && tempLinesDrawn.contains(rightVert)) {
           return false;
         }
       }
     }
     return true;
-  }
-
-//creating a methhod to check if a line in tempRemainingLines is safe or not if it is then add it to the list of safelines
-  void findSafeLines() {
-    tempRemainingLines.forEach((key, line) {
-      if (checkSafeLine(line)) {
-        safeLines[key] = line;
-      }
-    });
   }
 }

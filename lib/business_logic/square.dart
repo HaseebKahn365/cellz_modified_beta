@@ -29,7 +29,7 @@ class Square {
       leftVert = rightVert;
       rightVert = temp;
     }
-    setSquareCordinates(); // forgot about this method call
+    setSquareCordinates();
   }
 
   //now the coordinates of the point with least location will be the xCord and yCord of the square
@@ -55,6 +55,10 @@ class Square {
     rightVert: $rightVert,
     leftVert: $leftVert
     }''';
+  }
+
+  String hashForMap() {
+    return '$xCord$yCord';
   }
 
   //lets override the == operator to compare two squares

@@ -1,14 +1,18 @@
+import 'dart:async';
 import 'dart:developer';
 
+import 'package:cellz_modified_beta/business_logic/aiFunction.dart';
 import 'package:cellz_modified_beta/business_logic/game_canvas.dart';
+import 'package:cellz_modified_beta/business_logic/game_state.dart';
+import 'package:cellz_modified_beta/business_logic/lines.dart';
 import 'package:cellz_modified_beta/business_logic/point.dart';
+import 'package:cellz_modified_beta/business_logic/square.dart';
 import 'package:cellz_modified_beta/game_components/gui_line.dart';
+import 'package:cellz_modified_beta/game_components/gui_square.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/material.dart';
-
-//the dot is able to have collision detection with another dot and create lines
 
 enum LineDirection {
   up,
@@ -17,8 +21,8 @@ enum LineDirection {
   right,
 }
 
-class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks {
-  Point fixedPosition; //using the concept of composition for the fixed position of the dot
+class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks, HasGameRef {
+  Point myPoint; //using the concept of composition for the fixed position of the dot
   Offset? dragStart;
   Offset? dragEnd;
 
@@ -33,7 +37,7 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks {
 
   //in constructor make the player position centered
   Dot(
-    this.fixedPosition,
+    this.myPoint,
   ) {
     dynamicRadius = radius * 1.5;
     anchor = Anchor.center;
@@ -41,8 +45,11 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks {
     size = Vector2(0, 0) + Vector2.all(radius * 2); // Set the size of the player
     center = size / 2;
 
-    position = Vector2(fixedPosition.xCord.toDouble() * 100 + 60, fixedPosition.yCord.toDouble() * 100 + 60);
+    position = Vector2(myPoint.xCord.toDouble() * 100 + 60, myPoint.yCord.toDouble() * 100 + 60);
   }
+
+  //!static aIFunction instance
+  static AIFunction aiFunction = AIFunction();
 
   @override
   Future<void> onLoad() async {
@@ -62,70 +69,223 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks {
   //Array of used LineDirections
   List<LineDirection> usedDirections = [];
 
+  //boolean controller to make sure that the logic inside the onDragUpdate is executed once.
+  //when the finger is lifted we reset the controller.
+  //we need to make it static so that it is shared among all the instances of the class
+
+  static bool dragIsAllowed = true;
+
   @override
   void onDragUpdate(DragUpdateEvent event) {
-    isDragging = true;
-    dragEnd = event.localStartPosition.toOffset();
+    if (GameState.myTurn && dragIsAllowed) {
+      isDragging = true;
+      dragEnd = event.localStartPosition.toOffset();
 
-    //check if the distance between the dragStart and dragEnd is greater than the threshold then draw a line
-    if ((dragEnd! - dragStart!).distance > globalThreshold * 1.5) {
-      LineDirection direction = getDirection(dragStart!, dragEnd!);
+      //check if the distance between the dragStart and dragEnd is greater than the threshold then draw a line
+      if ((dragEnd! - dragStart!).distance > globalThreshold * 1.2) {
+        LineDirection direction = getDirection(dragStart!, dragEnd!);
 
-      log('Direction of line is : $direction');
+        log('Direction of line is : $direction');
 
-      switch (direction) {
-        case LineDirection.up:
-          if (lineApprover(
-            direction,
-          )) {
-            final upLine = GuiLine(center.toOffset(), center.toOffset() - Offset(0, globalThreshold));
-            add(upLine);
-            log('Up line created'); //great job!
-          }
+        Map<String, Square> squares = {};
+        switch (direction) {
+          case LineDirection.up:
+            if (lineApprover(direction)) {
+              final upLine = GuiLine(center.toOffset(), center.toOffset() - Offset(0, globalThreshold));
 
-          break;
-        case LineDirection.down:
-          final downLine = GuiLine(center.toOffset(), center.toOffset() + Offset(0, globalThreshold));
-          if (lineApprover(direction)) {
-            add(downLine);
-            log('Down line created');
-          }
+              Point? p2 = GameState.allPoints[myPoint.location - (GameState.gameCanvas.xPoints)];
+              if (p2 != null) {
+                bool invalid = !GameState.validLines.containsKey(Line(firstPoint: myPoint, secondPoint: p2).toString()) || (GameState.linesDrawn.containsKey(Line(firstPoint: myPoint, secondPoint: p2).toString()));
+                if (invalid) {
+                  print('Up Line is not valid because it either already exists or is not in the valid lines');
+                  return;
+                }
 
-          break;
-        case LineDirection.left:
-          final leftLine = GuiLine(center.toOffset(), center.toOffset() - Offset(globalThreshold, 0));
+                dragIsAllowed = false;
 
-          if (lineApprover(direction)) {
-            add(leftLine);
-            log('Left line created');
-          }
+                add(upLine);
+                print('p2 from the gui_dot: $p2');
+                Line verticleLine = Line(firstPoint: myPoint, secondPoint: p2);
+                verticleLine.addLineToMap();
+                print('Line added to the map: $verticleLine');
+                squares = verticleLine.checkSquare();
+                print('Total sqaures in the game are now : ${GameState.allSquares.length}');
 
-          break;
-        case LineDirection.right:
-          final rightLine = GuiLine(center.toOffset(), center.toOffset() + Offset(globalThreshold, 0));
+                if (squares.length > 0) {
+                  squares.forEach((key, value) {
+                    print('Square formed: $value');
+                    final guiSquare = GuiSquare(isMine: GameState.myTurn, myXcord: value.xCord, myYcord: value.yCord);
+                    gameRef.world.add(guiSquare);
+                  });
+                }
+              }
+              log('Up line created');
+            }
 
-          if (lineApprover(direction)) {
-            add(rightLine);
-            log('Right line created');
-          }
+            break;
+          case LineDirection.down:
+            if (lineApprover(direction)) {
+              final downLine = GuiLine(center.toOffset(), center.toOffset() + Offset(0, globalThreshold));
 
-          break;
+              //adding a vertical down line
+
+              //creating second point
+              Point? p2 = GameState.allPoints[myPoint.location + (GameState.gameCanvas.xPoints)];
+              if (p2 != null) {
+                bool invalid = !GameState.validLines.containsKey(Line(firstPoint: myPoint, secondPoint: p2).toString()) || (GameState.linesDrawn.containsKey(Line(firstPoint: myPoint, secondPoint: p2).toString()));
+                if (invalid) {
+                  print('Down Line is not valid because it either already exists or is not in the valid lines');
+                  return;
+                }
+
+                dragIsAllowed = false;
+
+                add(downLine);
+                print('p2 from the gui_dot: $p2');
+                Line verticleLine = Line(firstPoint: myPoint, secondPoint: p2);
+                verticleLine.addLineToMap();
+                print('Line added to the map: $verticleLine');
+                squares = verticleLine.checkSquare();
+
+                if (squares.length > 0) {
+                  squares.forEach((key, value) {
+                    print('Square formed: $value');
+                    final guiSquare = GuiSquare(isMine: GameState.myTurn, myXcord: value.xCord, myYcord: value.yCord);
+                    gameRef.world.add(guiSquare);
+                  });
+                }
+              }
+
+              log('Down line created');
+            }
+
+            break;
+          case LineDirection.left:
+            if (lineApprover(direction)) {
+              final leftLine = GuiLine(center.toOffset(), center.toOffset() - Offset(globalThreshold, 0));
+
+              //adding a horizontal left line
+
+              //creating second point
+              Point? p2 = GameState.allPoints[myPoint.location - 1];
+
+              if (p2 != null) {
+                bool invalid = !GameState.validLines.containsKey(Line(firstPoint: myPoint, secondPoint: p2).toString()) || (GameState.linesDrawn.containsKey(Line(firstPoint: myPoint, secondPoint: p2).toString()));
+                if (invalid) {
+                  print('this left Line is not valid because it either already exists or is not in the valid lines');
+                  return;
+                }
+
+                dragIsAllowed = false;
+
+                add(leftLine);
+                print('p2 from the gui_dot: $p2');
+                Line horizontalLine = Line(firstPoint: myPoint, secondPoint: p2);
+                horizontalLine.addLineToMap();
+                print('Line added to the map: $horizontalLine');
+                squares = horizontalLine.checkSquare();
+
+                if (squares.isNotEmpty) {
+                  squares.forEach((key, value) {
+                    print('Square formed: $value');
+                    final guiSquare = GuiSquare(isMine: GameState.myTurn, myXcord: value.xCord, myYcord: value.yCord);
+                    gameRef.world.add(guiSquare);
+                  });
+                }
+              }
+
+              log('Left line created');
+            }
+
+            break;
+          case LineDirection.right:
+            if (lineApprover(direction)) {
+              //adding a horizontal right line
+
+              //creating second point
+              Point? p2 = GameState.allPoints[myPoint.location + 1];
+              final rightLine = GuiLine(center.toOffset(), center.toOffset() + Offset(globalThreshold, 0));
+              if (p2 != null) {
+                bool invalid = !GameState.validLines.containsKey(Line(firstPoint: myPoint, secondPoint: p2).toString()) || (GameState.linesDrawn.containsKey(Line(firstPoint: myPoint, secondPoint: p2).toString()));
+                if (invalid) {
+                  print('this right Line is not valid because it either already exists or is not in the valid lines');
+                  return;
+                }
+
+                dragIsAllowed = false;
+
+                add(rightLine);
+                print('p2 from the gui_dot: $p2');
+                Line horizontalLine = Line(firstPoint: myPoint, secondPoint: p2);
+                horizontalLine.addLineToMap();
+                print('Line added to the map: $horizontalLine');
+                squares = horizontalLine.checkSquare();
+
+                if (squares.isNotEmpty) {
+                  squares.forEach((key, value) {
+                    print('Square formed: $value');
+                    final guiSquare = GuiSquare(isMine: GameState.myTurn, myXcord: value.xCord, myYcord: value.yCord);
+                    gameRef.world.add(guiSquare);
+                  });
+                }
+
+                log('Right line created');
+              }
+            }
+
+            break;
+        }
+        if (squares.isNotEmpty) {
+          dragIsAllowed = true;
+        }
+
+        dragEnd = null; //to make sure we don't visualize the drag line after the line is created
+        isDragging = false;
       }
-      dragEnd = null; //to make sure we don't visualize the drag line after the line is created
-      isDragging = false;
-    }
 
-    super.onDragUpdate(event);
+      super.onDragUpdate(event);
+    }
   }
 
-  @override
-  void onDragEnd(DragEndEvent event) {
-    //temporarily creating a new line
-    isDragging = false;
+  static bool isAIResponseRunning = false; //! Static flag to track if the AI response is running
 
+  @override
+  void onDragEnd(DragEndEvent event) async {
+    log('Finger has been lifted');
+    // Here we check if it's AI's turn. If yes, then call the AI function.
+    isDragging = false;
     dragEnd = null;
 
+    // Check if the AI response is not already running
+    if (!isAIResponseRunning) {
+      isAIResponseRunning = true; // Set the flag to indicate that the AI response is running more than one dot should not run aiResponses.
+      await aiResponse(); // Call the AI response function
+      isAIResponseRunning = false; // Reset the flag after the AI response is completed
+    }
+
     super.onDragEnd(event);
+  }
+
+  //!This is an AI Response function.
+
+  //for now we are just gonna use the futures to demo the feature:
+
+  Future<void> aiResponse() async {
+    print('Ai Function is initiated');
+
+    await Future.delayed(const Duration(milliseconds: 300)).then((value) async {
+      // aiFunction.testComponentCreation(gameRef);
+      if (!GameState.myTurn) {
+        try {
+          await aiFunction.buildReadyLines(gameRef);
+          dragIsAllowed = true;
+        } catch (e) {
+          log('Error in the AI function: $e');
+        }
+      }
+      print('Ai function is done');
+      //resetting the controller for the drag event
+    });
   }
 
   double maxRadius = 20.0; // Maximum dynamic radius
@@ -158,7 +318,7 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks {
     isDragging = false;
   }
 
-  final dragCoefficient = 0.4; //this is for adding a delay gap to the drag offset
+  final dragCoefficient = 0.35; //this is for adding a delay gap to the drag offset ..the lower the more gap
 
   @override
   void render(Canvas canvas) {
@@ -191,15 +351,15 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks {
     linesLimit--;
     //check if the direction is already used
     if (usedDirections.contains(direction)) {
-      log('Direction already used');
+      // log('Direction already used');
       return false;
     }
     if (linesLimit == 0) {
-      log('Lines limit reached');
+      // log('Lines limit reached');
       return false;
     }
     usedDirections.add(direction);
-    log('Direction added to used directions $direction');
+    // log('Direction added to used directions $direction');
     return true;
   }
 }
