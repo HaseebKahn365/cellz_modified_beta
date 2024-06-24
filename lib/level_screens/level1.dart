@@ -23,6 +23,7 @@ class Level1 extends StatelessWidget {
             child: Column(
               children: [
                 FloatingActionButton(
+                  heroTag: null,
                   onPressed: () async {
                     await game.zoomIn();
                   },
@@ -35,6 +36,7 @@ class Level1 extends StatelessWidget {
                     await game.resetZoom();
                   },
                   child: FloatingActionButton(
+                    heroTag: null,
                     onPressed: game.zoomOut,
                     child: Icon(Icons.zoom_out),
                   ),
@@ -48,6 +50,7 @@ class Level1 extends StatelessWidget {
               child: Row(
                 children: [
                   FloatingActionButton(
+                    heroTag: null,
                     onPressed: () async {
                       await game.moveRight();
                     },
@@ -57,6 +60,7 @@ class Level1 extends StatelessWidget {
                   Column(
                     children: [
                       FloatingActionButton(
+                        heroTag: null,
                         onPressed: () async {
                           await game.moveDown();
                         }, // Keep this to avoid errors, but the action is handled by long press
@@ -64,6 +68,7 @@ class Level1 extends StatelessWidget {
                       ),
                       SizedBox(height: 20),
                       FloatingActionButton(
+                        heroTag: null,
                         onPressed: () async {
                           await game.moveUp();
                         },
@@ -73,6 +78,7 @@ class Level1 extends StatelessWidget {
                   ),
                   SizedBox(width: 10),
                   FloatingActionButton(
+                    heroTag: null,
                     onPressed: () async {
                       await game.moveLeft();
                     },
