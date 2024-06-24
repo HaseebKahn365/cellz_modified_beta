@@ -1,13 +1,9 @@
-import 'dart:async';
-
 import 'package:cellz_modified_beta/my_game.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
 class Level1 extends StatelessWidget {
   Level1({super.key});
-
-  var _timer;
 
   @override
   Widget build(BuildContext context) {
@@ -27,13 +23,21 @@ class Level1 extends StatelessWidget {
             child: Column(
               children: [
                 FloatingActionButton(
-                  onPressed: game.zoomIn,
+                  onPressed: () async {
+                    await game.zoomIn();
+                  },
                   child: Icon(Icons.zoom_in),
                 ),
                 SizedBox(height: 10),
-                FloatingActionButton(
-                  onPressed: game.zoomOut,
-                  child: Icon(Icons.zoom_out),
+                GestureDetector(
+                  onLongPress: () async {
+                    print("Long press detected");
+                    await game.resetZoom();
+                  },
+                  child: FloatingActionButton(
+                    onPressed: game.zoomOut,
+                    child: Icon(Icons.zoom_out),
+                  ),
                 ),
               ],
             ),
@@ -43,68 +47,36 @@ class Level1 extends StatelessWidget {
               left: 10,
               child: Row(
                 children: [
-                  GestureDetector(
-                    onLongPressStart: (details) {
-                      _timer = Timer.periodic(const Duration(milliseconds: 70), (timer) {
-                        game.moveRight();
-                      });
+                  FloatingActionButton(
+                    onPressed: () async {
+                      await game.moveRight();
                     },
-                    onLongPressEnd: (details) {
-                      _timer?.cancel();
-                    },
-                    child: FloatingActionButton(
-                      onPressed: () {},
-                      child: Icon(Icons.arrow_back),
-                    ),
+                    child: Icon(Icons.arrow_back),
                   ),
                   SizedBox(width: 10),
                   Column(
                     children: [
-                      GestureDetector(
-                        child: FloatingActionButton(
-                          onPressed: () {}, // Keep this to avoid errors, but the action is handled by long press
-                          child: Icon(Icons.arrow_upward),
-                        ),
-                        onLongPressStart: (details) {
-                          _timer = Timer.periodic(const Duration(milliseconds: 70), (timer) {
-                            game.moveDown();
-                          });
-                        },
-                        onLongPressEnd: (details) {
-                          _timer?.cancel();
-                        },
+                      FloatingActionButton(
+                        onPressed: () async {
+                          await game.moveDown();
+                        }, // Keep this to avoid errors, but the action is handled by long press
+                        child: Icon(Icons.arrow_upward),
                       ),
                       SizedBox(height: 20),
-                      GestureDetector(
-                        onLongPressStart: (details) {
-                          _timer = Timer.periodic(const Duration(milliseconds: 70), (timer) {
-                            game.moveUp();
-                          });
+                      FloatingActionButton(
+                        onPressed: () async {
+                          await game.moveUp();
                         },
-                        onLongPressEnd: (details) {
-                          _timer?.cancel();
-                        },
-                        child: FloatingActionButton(
-                          onPressed: () {},
-                          child: Icon(Icons.arrow_downward),
-                        ),
+                        child: Icon(Icons.arrow_downward),
                       ),
                     ],
                   ),
                   SizedBox(width: 10),
-                  GestureDetector(
-                    onLongPressStart: (details) {
-                      _timer = Timer.periodic(const Duration(milliseconds: 70), (timer) {
-                        game.moveLeft();
-                      });
+                  FloatingActionButton(
+                    onPressed: () async {
+                      await game.moveLeft();
                     },
-                    onLongPressEnd: (details) {
-                      _timer?.cancel();
-                    },
-                    child: FloatingActionButton(
-                      onPressed: () {},
-                      child: Icon(Icons.arrow_forward),
-                    ),
+                    child: Icon(Icons.arrow_forward),
                   ),
                 ],
               )),
