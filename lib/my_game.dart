@@ -13,7 +13,7 @@ class MyGame extends FlameGame {
 
   MyGame({required this.xP, required this.yP})
       : super(
-          camera: CameraComponent.withFixedResolution(width: 1080, height: 2140),
+          camera: CameraComponent.withFixedResolution(width: 1080 / 1.2, height: 1940 / 1.2),
         ) {
     debugMode = false;
     priority = 0;
