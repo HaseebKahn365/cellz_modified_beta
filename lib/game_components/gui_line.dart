@@ -9,7 +9,7 @@ class GuiLine extends PositionComponent {
   double lineWidth = 2.0;
 
   GuiLine(this.start, this.end) {
-    priority = 100;
+    priority = 1;
     size = Vector2((end.dx - start.dx).abs(), (end.dy - start.dy).abs());
     anchor = Anchor.topLeft;
   }

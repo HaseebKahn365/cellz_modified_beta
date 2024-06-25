@@ -27,7 +27,7 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks, HasG
 
   final globalOffset = GameState.globalOffset;
 
-  double radius = 15;
+  late double radius;
 
   double dynamicRadius = 0;
 
@@ -38,7 +38,8 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks, HasG
   Dot(
     this.myPoint,
   ) {
-    dynamicRadius = radius * 1.5;
+    radius = GameState.globalOffset * 0.13;
+
     anchor = Anchor.center;
 
     size = Vector2(0, 0) + Vector2.all(radius * 2); // Set the size of the player
@@ -287,9 +288,10 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks, HasG
     });
   }
 
-  double maxRadius = 20.0; // Maximum dynamic radius
-  double scaleSpeed = 40.0; // Speed of scaling
+  late double maxRadius = radius * 2; // Maximum dynamic radius
+  double scaleSpeed = 150.0; // Speed of scaling
   bool isDragging = false; // Flag to track if the dot is being dragged
+  double tempOriginalRadius = GameState.globalOffset * 0.13;
 
   void update(double dt) {
     if (isDragging) {
@@ -300,10 +302,10 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks, HasG
       }
     } else {
       // Scale down the radius until it reaches the initial size
-      if (radius > 10.0) {
-        radius -= scaleSpeed * dt;
-        if (radius < 10.0) {
-          radius = 10.0;
+      if (radius > tempOriginalRadius) {
+        radius -= scaleSpeed * 0.3 * dt; //slower deflations
+        if (radius < tempOriginalRadius) {
+          radius = tempOriginalRadius;
         }
       }
     }
@@ -342,7 +344,7 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks, HasG
   @override
   bool containsLocalPoint(Vector2 point) {
     // Increase the touch detection radius to 20
-    return (point - (size / 2)).length < radius * 4;
+    return (point - (size / 2)).length < radius * 5;
   }
 
   //Line approver

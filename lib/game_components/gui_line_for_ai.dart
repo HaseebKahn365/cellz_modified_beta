@@ -1,3 +1,4 @@
+import 'package:cellz_modified_beta/business_logic/game_state.dart';
 import 'package:cellz_modified_beta/business_logic/point.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
@@ -19,8 +20,8 @@ class GuiLineForAi extends PositionComponent {
   }
 
   void _calculateLinePositionAndSize() {
-    _start = Offset(firstPoint.xCord * 100 + 60, firstPoint.yCord * 100 + 60);
-    _end = Offset(secondPoint.xCord * 100 + 60, secondPoint.yCord * 100 + 60);
+    _start = Offset(firstPoint.xCord * GameState.globalOffset + 60, firstPoint.yCord * GameState.globalOffset + 60);
+    _end = Offset(secondPoint.xCord * GameState.globalOffset + 60, secondPoint.yCord * GameState.globalOffset + 60);
   }
 
   Offset _start = Offset.zero;
