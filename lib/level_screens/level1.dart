@@ -11,7 +11,6 @@ class Level1 extends StatelessWidget {
     final game = MyGame(
       xP: 6,
       yP: 12,
-      appropriateOffset: Vector2(100, 100),
     );
 
     return Scaffold(
@@ -20,9 +19,9 @@ class Level1 extends StatelessWidget {
           //Here should be the overlay for game showing the players and the ui
           GamePlayScreen(),
 
-          GameWidget(game: game),
+          Container(padding: const EdgeInsets.only(top: 200), child: GameWidget(game: game)),
           Positioned(
-            bottom: 50,
+            bottom: 40,
             right: 10,
             child: Column(
               children: [
@@ -49,7 +48,7 @@ class Level1 extends StatelessWidget {
             ),
           ),
           Positioned(
-              bottom: 50,
+              bottom: 40,
               left: 10,
               child: Row(
                 children: [

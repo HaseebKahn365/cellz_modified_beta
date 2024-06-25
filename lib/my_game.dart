@@ -7,14 +7,13 @@ import 'package:flutter/material.dart';
 
 class MyGame extends FlameGame {
   final int xP, yP;
-  Vector2 appropriateOffset;
   late final TextComponent textComponent;
   //we will create a background rectangle behind all the dots so that the map is visible.
   late final RoundedRectangleComponent backgroundComponent;
 
-  MyGame({required this.xP, required this.yP, required this.appropriateOffset})
+  MyGame({required this.xP, required this.yP})
       : super(
-          camera: CameraComponent.withFixedResolution(width: 700, height: 1000),
+          camera: CameraComponent.withFixedResolution(width: 1080, height: 2140),
         ) {
     debugMode = false;
     priority = 0;
@@ -42,10 +41,10 @@ class MyGame extends FlameGame {
 
     //the rectangle component will have the widthh of no of xpoint  * appropriateOffset.x and height of no of ypoints  * appropriateOffset.y
     backgroundComponent = RoundedRectangleComponent(
-      size: Vector2(xP * appropriateOffset.x, yP * appropriateOffset.y),
+      size: Vector2(xP * GameState.globalOffset, yP * GameState.globalOffset),
       position: Vector2(0, 0),
       paint: Paint()..color = GameState.colorSet[0].withOpacity(0.5),
-      borderRadius: 20,
+      borderRadius: 50,
     );
 
     world.add(backgroundComponent);
@@ -83,7 +82,7 @@ class MyGame extends FlameGame {
   Future<void> moveUp() async {
     // camera.viewfinder.transform.position.add(Vector2(0, -30));
     for (var i = 0; i < 90; i++) {
-      if (camera.viewfinder.transform.position.y < -(appropriateOffset.y * GameState.gameCanvas.yPoints / 2)) {
+      if (camera.viewfinder.transform.position.y < -(GameState.globalOffset * GameState.gameCanvas.yPoints / 2)) {
         break;
       }
       camera.viewfinder.transform.position.add(Vector2(0, -1.0));
@@ -94,7 +93,7 @@ class MyGame extends FlameGame {
   Future<void> moveDown() async {
     // camera.viewfinder.transform.position.add(Vector2(0, 30));
     for (var i = 0; i < 90; i++) {
-      if (camera.viewfinder.transform.position.y > (appropriateOffset.y * GameState.gameCanvas.yPoints / 2)) {
+      if (camera.viewfinder.transform.position.y > (GameState.globalOffset * GameState.gameCanvas.yPoints / 2)) {
         break;
       }
       camera.viewfinder.transform.position.add(Vector2(0, 1.0));
@@ -105,7 +104,7 @@ class MyGame extends FlameGame {
   Future<void> moveLeft() async {
     // camera.viewfinder.transform.position.add(Vector2(-30, 0));
     for (var i = 0; i < 90; i++) {
-      if (camera.viewfinder.transform.position.x < -(appropriateOffset.x * GameState.gameCanvas.xPoints / 2)) {
+      if (camera.viewfinder.transform.position.x < -(GameState.globalOffset * GameState.gameCanvas.xPoints / 2)) {
         break;
       }
       camera.viewfinder.transform.position.add(Vector2(-1.0, 0));
@@ -116,7 +115,7 @@ class MyGame extends FlameGame {
   Future<void> moveRight() async {
     // camera.viewfinder.transform.position.add(Vector2(30, 0));
     for (var i = 0; i < 90; i++) {
-      if (camera.viewfinder.transform.position.x > (appropriateOffset.x * GameState.gameCanvas.xPoints / 2)) {
+      if (camera.viewfinder.transform.position.x > (GameState.globalOffset * GameState.gameCanvas.xPoints / 2)) {
         break;
       }
       camera.viewfinder.transform.position.add(Vector2(1.0, 0));
