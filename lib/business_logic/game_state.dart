@@ -4,6 +4,7 @@ import 'package:cellz_modified_beta/business_logic/game_canvas.dart';
 import 'package:cellz_modified_beta/business_logic/lines.dart';
 import 'package:cellz_modified_beta/business_logic/point.dart';
 import 'package:cellz_modified_beta/business_logic/square.dart';
+import 'package:flutter/material.dart';
 
 class GameState {
   static Map<String, Line> linesDrawn = {};
@@ -12,6 +13,8 @@ class GameState {
 
 // and Here is how we store the all points in the game
   static Map<int, Point> allPoints = {}; //key is the location aka the index of the point in the grid
+
+  static List<Color> colorSet = [Colors.purple]; //colors for the players
 
   //a static member for all squares
   static Map<String, Square> allSquares = {};

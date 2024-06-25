@@ -10,7 +10,7 @@ class Level1 extends StatelessWidget {
   Widget build(BuildContext context) {
     final game = MyGame(
       xP: 6,
-      yP: 6,
+      yP: 12,
       appropriateOffset: Vector2(100, 100),
     );
 
@@ -33,7 +33,7 @@ class Level1 extends StatelessWidget {
                   },
                   child: Icon(Icons.zoom_in),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 GestureDetector(
                   onLongPress: () async {
                     print("Long press detected");
@@ -60,7 +60,7 @@ class Level1 extends StatelessWidget {
                     },
                     child: Icon(Icons.arrow_back),
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Column(
                     children: [
                       FloatingActionButton(
@@ -70,7 +70,7 @@ class Level1 extends StatelessWidget {
                         }, // Keep this to avoid errors, but the action is handled by long press
                         child: Icon(Icons.arrow_upward),
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       FloatingActionButton(
                         heroTag: null,
                         onPressed: () async {
@@ -80,7 +80,7 @@ class Level1 extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   FloatingActionButton(
                     heroTag: null,
                     onPressed: () async {

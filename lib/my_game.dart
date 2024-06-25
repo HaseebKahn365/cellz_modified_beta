@@ -9,6 +9,8 @@ class MyGame extends FlameGame {
   final int xP, yP;
   Vector2 appropriateOffset;
   late final TextComponent textComponent;
+  //we will create a background rectangle behind all the dots so that the map is visible.
+  late final RoundedRectangleComponent backgroundComponent;
 
   MyGame({required this.xP, required this.yP, required this.appropriateOffset})
       : super(
@@ -37,6 +39,17 @@ class MyGame extends FlameGame {
         fontSize: 20,
       )),
     );
+
+    //the rectangle component will have the widthh of no of xpoint  * appropriateOffset.x and height of no of ypoints  * appropriateOffset.y
+    backgroundComponent = RoundedRectangleComponent(
+      size: Vector2(xP * appropriateOffset.x, yP * appropriateOffset.y),
+      position: Vector2(0, 0),
+      paint: Paint()..color = GameState.colorSet[0].withOpacity(0.5),
+      borderRadius: 20,
+    );
+
+    world.add(backgroundComponent);
+
     world.add(textComponent);
 
     for (var entry in GameState.allPoints.entries) {
@@ -125,5 +138,25 @@ class MyGame extends FlameGame {
     }
 
     //also make the offset back to the original position
+  }
+}
+
+class RoundedRectangleComponent extends PositionComponent {
+  final Paint paint;
+  final double borderRadius;
+
+  RoundedRectangleComponent({
+    required Vector2 size,
+    required Vector2 position,
+    required this.paint,
+    required this.borderRadius,
+  }) : super(size: size, position: position);
+
+  @override
+  void render(Canvas canvas) {
+    super.render(canvas);
+    final rect = Rect.fromLTWH(0, 0, size.x, size.y);
+    final rrect = RRect.fromRectAndRadius(rect, Radius.circular(borderRadius));
+    canvas.drawRRect(rrect, paint);
   }
 }

@@ -15,7 +15,6 @@ class GamePlayScreen extends StatefulWidget {
 class _GamePlayScreenState extends State<GamePlayScreen> {
   //lets override the back button to make sure that user doesn't leave the game accidently
 
-  var newLineOffset = List<Offset>.filled(3, Offset(0, 0));
   bool isLineCreated = false;
   @override
   Widget build(BuildContext context) {
@@ -64,19 +63,6 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
             children: [
               PlayersBox(),
               //creating a container with rounded borders that will contain the stack
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  //its just a container with rounded borders and a little horizontal padding
-                  height: 600,
-                  width: 400,
-
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.onPrimaryContainer.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              )
             ],
           ),
         ),

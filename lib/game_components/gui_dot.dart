@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:cellz_modified_beta/business_logic/aiFunction.dart';
-import 'package:cellz_modified_beta/business_logic/game_canvas.dart';
 import 'package:cellz_modified_beta/business_logic/game_state.dart';
 import 'package:cellz_modified_beta/business_logic/lines.dart';
 import 'package:cellz_modified_beta/business_logic/point.dart';
