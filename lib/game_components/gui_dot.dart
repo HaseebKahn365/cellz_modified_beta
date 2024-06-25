@@ -26,7 +26,7 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks, HasG
   Offset? dragStart;
   Offset? dragEnd;
 
-  final globalThreshold = GameCanvas.globalThreshold;
+  final globalOffset = GameState.globalOffset;
 
   double radius = 15;
 
@@ -45,7 +45,7 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks, HasG
     size = Vector2(0, 0) + Vector2.all(radius * 2); // Set the size of the player
     center = size / 2;
 
-    position = Vector2(myPoint.xCord.toDouble() * 100 + 60, myPoint.yCord.toDouble() * 100 + 60);
+    position = Vector2(myPoint.xCord.toDouble() * globalOffset + 60, myPoint.yCord.toDouble() * globalOffset + 60);
   }
 
   //!static aIFunction instance
@@ -82,7 +82,7 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks, HasG
       dragEnd = event.localStartPosition.toOffset();
 
       //check if the distance between the dragStart and dragEnd is greater than the threshold then draw a line
-      if ((dragEnd! - dragStart!).distance > globalThreshold * 1.2) {
+      if ((dragEnd! - dragStart!).distance > globalOffset * 1.2) {
         LineDirection direction = getDirection(dragStart!, dragEnd!);
 
         log('Direction of line is : $direction');
@@ -91,7 +91,7 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks, HasG
         switch (direction) {
           case LineDirection.up:
             if (lineApprover(direction)) {
-              final upLine = GuiLine(center.toOffset(), center.toOffset() - Offset(0, globalThreshold));
+              final upLine = GuiLine(center.toOffset(), center.toOffset() - Offset(0, globalOffset));
 
               Point? p2 = GameState.allPoints[myPoint.location - (GameState.gameCanvas.xPoints)];
               if (p2 != null) {
@@ -125,7 +125,7 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks, HasG
             break;
           case LineDirection.down:
             if (lineApprover(direction)) {
-              final downLine = GuiLine(center.toOffset(), center.toOffset() + Offset(0, globalThreshold));
+              final downLine = GuiLine(center.toOffset(), center.toOffset() + Offset(0, globalOffset));
 
               //adding a vertical down line
 
@@ -162,7 +162,7 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks, HasG
             break;
           case LineDirection.left:
             if (lineApprover(direction)) {
-              final leftLine = GuiLine(center.toOffset(), center.toOffset() - Offset(globalThreshold, 0));
+              final leftLine = GuiLine(center.toOffset(), center.toOffset() - Offset(globalOffset, 0));
 
               //adding a horizontal left line
 
@@ -204,7 +204,7 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks, HasG
 
               //creating second point
               Point? p2 = GameState.allPoints[myPoint.location + 1];
-              final rightLine = GuiLine(center.toOffset(), center.toOffset() + Offset(globalThreshold, 0));
+              final rightLine = GuiLine(center.toOffset(), center.toOffset() + Offset(globalOffset, 0));
               if (p2 != null) {
                 bool invalid = !GameState.validLines.containsKey(Line(firstPoint: myPoint, secondPoint: p2).toString()) || (GameState.linesDrawn.containsKey(Line(firstPoint: myPoint, secondPoint: p2).toString()));
                 if (invalid) {

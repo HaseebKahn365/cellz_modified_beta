@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 
 class MyGame extends FlameGame {
   final int xP, yP;
-  Vector2 appropriateOffset = Vector2(0, 0);
+  Vector2 appropriateOffset;
   late final TextComponent textComponent;
 
   MyGame({required this.xP, required this.yP, required this.appropriateOffset})
@@ -15,6 +15,7 @@ class MyGame extends FlameGame {
           camera: CameraComponent.withFixedResolution(width: 700, height: 1000),
         ) {
     debugMode = false;
+    priority = 0;
     GameState.initGameCanvas(xPoints: xP, yPoints: yP);
   }
 
@@ -23,12 +24,18 @@ class MyGame extends FlameGame {
 
   @override
   FutureOr<void> onLoad() async {
+    //adjust the anchor to the appropriate offset
     camera.viewfinder.anchor = Anchor.topLeft;
 
     textComponent = TextComponent(
       text: GameState.myTurn ? 'Your Turn' : 'AI Turn',
       anchor: Anchor.topCenter,
       position: Vector2(350, 10), // Centered horizontally
+      textRenderer: TextPaint(
+          style: const TextStyle(
+        color: Colors.black,
+        fontSize: 20,
+      )),
     );
     world.add(textComponent);
 
@@ -100,7 +107,7 @@ class MyGame extends FlameGame {
         break;
       }
       camera.viewfinder.transform.position.add(Vector2(1.0, 0));
-      await Future.delayed(const Duration(milliseconds: 5));
+      await Future.delayed(const Duration(milliseconds: 1));
     }
   }
 

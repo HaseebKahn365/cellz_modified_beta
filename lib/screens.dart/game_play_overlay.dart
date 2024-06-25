@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 
 //creating an instance of the class
 
-class PlayWithAi extends StatefulWidget {
-  PlayWithAi({Key? key}) : super(key: key) {}
+class GamePlayScreen extends StatefulWidget {
+  GamePlayScreen({Key? key}) : super(key: key) {}
 
   @override
-  State<PlayWithAi> createState() => _PlayWithAiState();
+  State<GamePlayScreen> createState() => _GamePlayScreenState();
 }
 
-class _PlayWithAiState extends State<PlayWithAi> {
+class _GamePlayScreenState extends State<GamePlayScreen> {
   //lets override the back button to make sure that user doesn't leave the game accidently
 
   var newLineOffset = List<Offset>.filled(3, Offset(0, 0));

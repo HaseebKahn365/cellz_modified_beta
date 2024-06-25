@@ -8,6 +8,8 @@ import 'package:cellz_modified_beta/business_logic/square.dart';
 class GameState {
   static Map<String, Line> linesDrawn = {};
 
+  static double globalOffset = 100; //this is the offset that is used to properly adjust the dots in the game.
+
 // and Here is how we store the all points in the game
   static Map<int, Point> allPoints = {}; //key is the location aka the index of the point in the grid
 

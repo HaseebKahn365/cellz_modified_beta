@@ -11,14 +11,14 @@ class Level1 extends StatelessWidget {
     final game = MyGame(
       xP: 6,
       yP: 6,
-      appropriateOffset: Vector2(250, 250),
+      appropriateOffset: Vector2(100, 100),
     );
 
     return Scaffold(
       body: Stack(
         children: [
           //Here should be the overlay for game showing the players and the ui
-          PlayWithAi(),
+          GamePlayScreen(),
 
           GameWidget(game: game),
           Positioned(
