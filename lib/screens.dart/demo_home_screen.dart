@@ -77,11 +77,13 @@ class ProfileSection extends StatelessWidget {
               SizedBox(width: 16),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     'Abdul Haseeb',
                     style: TextStyle(fontSize: 25, fontWeight: FontWeight.w400),
                   ),
+                  const SizedBox(height: 10),
                   Text('Wins / Losses:', style: TextStyle(fontSize: 12)),
                   //22/3
                   Row(
@@ -96,10 +98,10 @@ class ProfileSection extends StatelessWidget {
                     ],
                   ),
 
-                  Text('Score:', style: TextStyle(fontSize: 12)),
-                  // 1200
-                  Text('1200', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w200)),
-
+                  // Text('Score:', style: TextStyle(fontSize: 12)),
+                  // // 1200
+                  // Text('1200', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w200)),
+                  const SizedBox(height: 10),
                   // hearts
                   Text('Hearts:',
                       style: TextStyle(
@@ -112,6 +114,7 @@ class ProfileSection extends StatelessWidget {
                       Icon(Icons.favorite_border),
                     ],
                   ),
+                  const SizedBox(height: 10),
 
                   Text('Next Life:', style: TextStyle(fontSize: 12)),
                   // 2:30
@@ -120,7 +123,7 @@ class ProfileSection extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 8),
+          SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -162,7 +165,9 @@ class TabSection extends StatelessWidget {
             height: 300,
             child: TabBarView(
               children: [
-                Center(child: Text('Overview Content')),
+                // Center(child: Text('Overview Content')),
+
+                //creating a coursel similar to google photos
                 Center(child: Text('Journey Content')),
                 Center(child: Text('Special Content')),
               ],
