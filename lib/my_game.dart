@@ -19,7 +19,7 @@ class MyGame extends FlameGame {
   }
 
   @override
-  Color backgroundColor() => Colors.black;
+  Color backgroundColor() => Colors.black.withOpacity(0);
 
   @override
   FutureOr<void> onLoad() async {

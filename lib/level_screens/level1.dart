@@ -1,4 +1,5 @@
 import 'package:cellz_modified_beta/my_game.dart';
+import 'package:cellz_modified_beta/screens.dart/game_play_overlay.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
@@ -10,12 +11,15 @@ class Level1 extends StatelessWidget {
     final game = MyGame(
       xP: 6,
       yP: 6,
-      appropriateOffset: Vector2(200, 200),
+      appropriateOffset: Vector2(250, 250),
     );
 
     return Scaffold(
       body: Stack(
         children: [
+          //Here should be the overlay for game showing the players and the ui
+          PlayWithAi(),
+
           GameWidget(game: game),
           Positioned(
             bottom: 50,
