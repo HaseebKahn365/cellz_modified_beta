@@ -6,7 +6,7 @@ import 'package:cellz_modified_beta/business_logic/game_state.dart';
 import 'package:cellz_modified_beta/business_logic/lines.dart';
 import 'package:cellz_modified_beta/business_logic/point.dart';
 import 'package:cellz_modified_beta/business_logic/square.dart';
-import 'package:cellz_modified_beta/game_components/gui_line.dart';
+import 'package:cellz_modified_beta/game_components/gui_line_for_ai.dart';
 import 'package:cellz_modified_beta/game_components/gui_square.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
@@ -91,8 +91,6 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks, HasG
         switch (direction) {
           case LineDirection.up:
             if (lineApprover(direction)) {
-              final upLine = GuiLine(center.toOffset(), center.toOffset() - Offset(0, globalOffset));
-
               Point? p2 = GameState.allPoints[myPoint.location - (GameState.gameCanvas.xPoints)];
               if (p2 != null) {
                 bool invalid = !GameState.validLines.containsKey(Line(firstPoint: myPoint, secondPoint: p2).toString()) || (GameState.linesDrawn.containsKey(Line(firstPoint: myPoint, secondPoint: p2).toString()));
@@ -100,10 +98,14 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks, HasG
                   print('Up Line is not valid because it either already exists or is not in the valid lines');
                   return;
                 }
+                // final upLine = GuiLine(center.toOffset(), center.toOffset() - Offset(0, globalOffset));
+
+                // instead of  using the GuiLine object we want to use GuiLineForAi({required this.firstPoint, required this.secondPoint}) {...}
+                final upLine = GuiLineForAi(firstPoint: myPoint, secondPoint: GameState.allPoints[myPoint.location - (GameState.gameCanvas.xPoints)]!);
 
                 dragIsAllowed = false;
 
-                add(upLine);
+                gameRef.world.add(upLine);
                 print('p2 from the gui_dot: $p2');
                 Line verticleLine = Line(firstPoint: myPoint, secondPoint: p2);
                 verticleLine.addLineToMap();
@@ -125,7 +127,9 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks, HasG
             break;
           case LineDirection.down:
             if (lineApprover(direction)) {
-              final downLine = GuiLine(center.toOffset(), center.toOffset() + Offset(0, globalOffset));
+              // final downLine = GuiLine(center.toOffset(), center.toOffset() + Offset(0, globalOffset));
+
+              // instead of  using the GuiLine object we want to use GuiLineForAi({required this.firstPoint, required this.secondPoint}) {...
 
               //adding a vertical down line
 
@@ -137,10 +141,11 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks, HasG
                   print('Down Line is not valid because it either already exists or is not in the valid lines');
                   return;
                 }
+                final downLine = GuiLineForAi(firstPoint: myPoint, secondPoint: GameState.allPoints[myPoint.location + (GameState.gameCanvas.xPoints)]!);
 
                 dragIsAllowed = false;
 
-                add(downLine);
+                gameRef.world.add(downLine);
                 print('p2 from the gui_dot: $p2');
                 Line verticleLine = Line(firstPoint: myPoint, secondPoint: p2);
                 verticleLine.addLineToMap();
@@ -162,7 +167,8 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks, HasG
             break;
           case LineDirection.left:
             if (lineApprover(direction)) {
-              final leftLine = GuiLine(center.toOffset(), center.toOffset() - Offset(globalOffset, 0));
+              // final leftLine = GuiLine(center.toOffset(), center.toOffset() - Offset(globalOffset, 0));
+              //lets use the GuiLineForAi class instead of the GuiLine class
 
               //adding a horizontal left line
 
@@ -175,10 +181,11 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks, HasG
                   print('this left Line is not valid because it either already exists or is not in the valid lines');
                   return;
                 }
+                final leftLine = GuiLineForAi(firstPoint: myPoint, secondPoint: GameState.allPoints[myPoint.location - 1]!);
 
                 dragIsAllowed = false;
 
-                add(leftLine);
+                gameRef.world.add(leftLine);
                 print('p2 from the gui_dot: $p2');
                 Line horizontalLine = Line(firstPoint: myPoint, secondPoint: p2);
                 horizontalLine.addLineToMap();
@@ -204,17 +211,21 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks, HasG
 
               //creating second point
               Point? p2 = GameState.allPoints[myPoint.location + 1];
-              final rightLine = GuiLine(center.toOffset(), center.toOffset() + Offset(globalOffset, 0));
               if (p2 != null) {
+                // final rightLine = GuiLine(center.toOffset(), center.toOffset() + Offset(globalOffset, 0));
+                //lets use the GuiLineForAi class instead of the GuiLine class
+
                 bool invalid = !GameState.validLines.containsKey(Line(firstPoint: myPoint, secondPoint: p2).toString()) || (GameState.linesDrawn.containsKey(Line(firstPoint: myPoint, secondPoint: p2).toString()));
                 if (invalid) {
                   print('this right Line is not valid because it either already exists or is not in the valid lines');
                   return;
                 }
+                final rightLine = GuiLineForAi(firstPoint: myPoint, secondPoint: GameState.allPoints[myPoint.location + 1]!);
 
                 dragIsAllowed = false;
 
-                add(rightLine);
+                gameRef.world.add(rightLine);
+
                 print('p2 from the gui_dot: $p2');
                 Line horizontalLine = Line(firstPoint: myPoint, secondPoint: p2);
                 horizontalLine.addLineToMap();

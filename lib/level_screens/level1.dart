@@ -9,8 +9,8 @@ class Level1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final game = MyGame(
-      xP: 3,
-      yP: 3,
+      xP: 7,
+      yP: 12,
     );
 
     return Scaffold(

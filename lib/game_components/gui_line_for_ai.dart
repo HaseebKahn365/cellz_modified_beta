@@ -9,7 +9,7 @@ class GuiLineForAi extends PositionComponent {
   double glowDoubleValue = 0;
   bool increasingGlow = true;
   double lineWidth = 2.0;
-  double animationProgress = 0.0;
+  double animationProgress = GameState.myTurn ? 0.4 : 0;
 
   GuiLineForAi({required this.firstPoint, required this.secondPoint}) {
     priority = 0;
