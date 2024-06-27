@@ -22,11 +22,11 @@ class GameState {
     Colors.green, //human color
     Colors.red, //AI color
 
-    Colors.purpleAccent, //square icon box color
+    Colors.white, //square icon box color //5th index
   ];
 
   static List<IconData> iconSet = [
-    Icons.check_circle_rounded, //human
+    Icons.check, //human
     Icons.close_rounded,
   ];
 

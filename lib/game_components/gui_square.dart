@@ -58,7 +58,7 @@ class GuiSquare extends PositionComponent {
 
     // Draw the square
     final squarePaint = Paint()
-      ..color = const Color(0xFFF0F0F0)
+      ..color = GameState.colorSet[5]
       ..style = PaintingStyle.fill;
 
     final squareWithBorder = Path()
