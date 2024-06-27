@@ -17,7 +17,7 @@ class Level1 extends StatelessWidget {
       body: Stack(
         children: [
           //Here should be the overlay for game showing the players and the ui
-          GamePlayScreen(),
+          GamePlayScreen(), //this is just the overlay
 
           Container(padding: const EdgeInsets.only(top: 200), child: GameWidget(game: game)),
           Positioned(

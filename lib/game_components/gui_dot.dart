@@ -36,9 +36,12 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks, HasG
 
   //in constructor make the player position centered
   Dot(
-    this.myPoint,
-  ) {
-    radius = GameState.globalOffset * 0.13;
+    this.myPoint, {
+    double radFactor = 0.13, //this is the factor by which the radius is multiplied by the global offset}
+  } //this is the factor by which the radius is multiplied by the global offset}
+      ) {
+    radius = GameState.globalOffset * radFactor;
+    tempOriginalRadius = radius;
 
     anchor = Anchor.center;
 
@@ -302,7 +305,7 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks, HasG
   late double maxRadius = radius * 2; // Maximum dynamic radius
   double scaleSpeed = 150.0; // Speed of scaling
   bool isDragging = false; // Flag to track if the dot is being dragged
-  double tempOriginalRadius = GameState.globalOffset * 0.13;
+  late double tempOriginalRadius;
 
   void update(double dt) {
     if (isDragging) {

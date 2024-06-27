@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:cellz_modified_beta/business_logic/game_state.dart';
-import 'package:cellz_modified_beta/game_components/gui_dot.dart';
+import 'package:cellz_modified_beta/custom_components/custom_gui_dot.dart';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
@@ -52,7 +52,9 @@ class MyGame extends FlameGame {
     world.add(textComponent);
 
     for (var entry in GameState.allPoints.entries) {
-      world.add(Dot(entry.value));
+      world.add(CustomGuiDot(
+        myPoint: entry.value,
+      ));
     }
   }
 
