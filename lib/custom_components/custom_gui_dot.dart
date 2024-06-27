@@ -7,9 +7,28 @@ ovrridable aiRespone method so that in future we can use streambuilder with fire
 overridable dot color and line paint color.
  */
 
+import 'dart:developer';
+
 import 'package:cellz_modified_beta/business_logic/point.dart';
 import 'package:cellz_modified_beta/game_components/gui_dot.dart';
+import 'package:cellz_modified_beta/game_components/gui_line_for_ai.dart';
 
 class CustomGuiDot extends Dot {
   CustomGuiDot({required Point myPoint, double radFactor = 0.1}) : super(myPoint, radFactor: radFactor);
+
+  // @override
+  // Future<void> aiResponse() async {
+  //   // for now lets test it with creating a guiLine and adding it to the world
+
+  //   await Future.delayed(Duration(seconds: 1)).then((value) {
+  //     log('AI Response is called with custom features');
+  //     Point firstPoint = Point(xCord: 0, yCord: 0, location: 0);
+  //     Point secondPoint = Point(xCord: 1, yCord: 0, location: 1);
+  //     final guiLine = GuiLine(firstPoint: firstPoint, secondPoint: secondPoint);
+
+  //     gameRef.world.add(guiLine);
+  //   });
+  // }
+
+  //the ai response also passes the test
 }
