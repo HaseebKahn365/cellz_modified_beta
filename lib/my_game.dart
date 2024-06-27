@@ -20,6 +20,8 @@ class MyGame extends FlameGame {
     GameState.initGameCanvas(xPoints: xP, yPoints: yP);
   }
 
+  final globalOffsetLocalCopy = GameState.globalOffset; //for improving performance
+
   @override
   Color backgroundColor() => Colors.black.withOpacity(0);
 
@@ -41,7 +43,7 @@ class MyGame extends FlameGame {
 
     //the rectangle component will have the widthh of no of xpoint  * appropriateOffset.x and height of no of ypoints  * appropriateOffset.y
     backgroundComponent = RoundedRectangleComponent(
-      size: Vector2(xP * GameState.globalOffset, yP * GameState.globalOffset),
+      size: Vector2(xP * globalOffsetLocalCopy, yP * globalOffsetLocalCopy),
       position: Vector2(0, 0),
       paint: Paint()..color = GameState.colorSet[0].withOpacity(0.5),
       borderRadius: 50,
@@ -84,7 +86,7 @@ class MyGame extends FlameGame {
   Future<void> moveUp() async {
     // camera.viewfinder.transform.position.add(Vector2(0, -30));
     for (var i = 0; i < 90; i++) {
-      if (camera.viewfinder.transform.position.y < -(GameState.globalOffset * GameState.gameCanvas.yPoints / 2)) {
+      if (camera.viewfinder.transform.position.y < -(globalOffsetLocalCopy * yP / 2)) {
         break;
       }
       camera.viewfinder.transform.position.add(Vector2(0, -1.0));
@@ -95,7 +97,7 @@ class MyGame extends FlameGame {
   Future<void> moveDown() async {
     // camera.viewfinder.transform.position.add(Vector2(0, 30));
     for (var i = 0; i < 90; i++) {
-      if (camera.viewfinder.transform.position.y > (GameState.globalOffset * GameState.gameCanvas.yPoints / 2)) {
+      if (camera.viewfinder.transform.position.y > (globalOffsetLocalCopy * yP / 2)) {
         break;
       }
       camera.viewfinder.transform.position.add(Vector2(0, 1.0));
@@ -106,7 +108,7 @@ class MyGame extends FlameGame {
   Future<void> moveLeft() async {
     // camera.viewfinder.transform.position.add(Vector2(-30, 0));
     for (var i = 0; i < 90; i++) {
-      if (camera.viewfinder.transform.position.x < -(GameState.globalOffset * GameState.gameCanvas.xPoints / 2)) {
+      if (camera.viewfinder.transform.position.x < -(globalOffsetLocalCopy * xP / 2)) {
         break;
       }
       camera.viewfinder.transform.position.add(Vector2(-1.0, 0));
@@ -117,7 +119,7 @@ class MyGame extends FlameGame {
   Future<void> moveRight() async {
     // camera.viewfinder.transform.position.add(Vector2(30, 0));
     for (var i = 0; i < 90; i++) {
-      if (camera.viewfinder.transform.position.x > (GameState.globalOffset * GameState.gameCanvas.xPoints / 2)) {
+      if (camera.viewfinder.transform.position.x > (globalOffsetLocalCopy * xP / 2)) {
         break;
       }
       camera.viewfinder.transform.position.add(Vector2(1.0, 0));
