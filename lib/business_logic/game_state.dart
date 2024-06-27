@@ -14,7 +14,21 @@ class GameState {
 // and Here is how we store the all points in the game
   static Map<int, Point> allPoints = {}; //key is the location aka the index of the point in the grid
 
-  static List<Color> colorSet = [Colors.purple]; //colors for the players
+  static List<Color> colorSet = [
+    Colors.purple, //color for bg
+    Colors.white, //color for drag line
+    Colors.blue, //dot color
+
+    Colors.green, //human color
+    Colors.red, //AI color
+
+    Colors.purpleAccent, //square icon box color
+  ];
+
+  static List<IconData> iconSet = [
+    Icons.check_circle_rounded, //human
+    Icons.close_rounded,
+  ];
 
   //a static member for all squares
   static Map<String, Square> allSquares = {};

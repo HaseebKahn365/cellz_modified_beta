@@ -340,20 +340,25 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks, HasG
     super.render(canvas);
 
     // Draw the player as a circle
-    canvas.drawCircle(const Offset(0, 0) + (size / 2).toOffset(), radius, Paint()..color = const Color.fromARGB(255, 193, 201, 236));
+    canvas.drawCircle(const Offset(0, 0) + (size / 2).toOffset(), radius, Paint()..color = dotColor);
 
     // Draw the line if dragStart and dragEnd are set
     if (dragStart != null && dragEnd != null) {
       const start = Offset.zero;
       final end = dragEnd! - dragStart!;
       canvas.drawLine(
-          start + (size / 2).toOffset(),
-          Offset(end.dx * dragCoefficient, end.dy * dragCoefficient) + (size / 2).toOffset(),
-          Paint()
-            ..color = Colors.white
-            ..strokeWidth = 2.0);
+        start + (size / 2).toOffset(),
+        Offset(end.dx * dragCoefficient, end.dy * dragCoefficient) + (size / 2).toOffset(),
+        lineColor,
+      );
     }
   }
+
+  final dotColor = GameState.colorSet[2];
+
+  final lineColor = Paint()
+    ..color = GameState.colorSet[1]
+    ..strokeWidth = 2.0;
 
   @override
   bool containsLocalPoint(Vector2 point) {

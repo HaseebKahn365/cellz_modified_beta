@@ -14,9 +14,9 @@ class GuiSquare extends PositionComponent {
 
   double currentSize = 0.0;
   double velocity = 100.0;
-  IconData aiIcon = Icons.ac_unit;
+  final IconData aiIcon = GameState.iconSet[1];
   Color color = Colors.purple;
-  IconData humanIcon = Icons.accessibility_new;
+  final IconData humanIcon = GameState.iconSet.first;
   Color humanColor = Colors.green;
   double iconScale = 0.0;
 
@@ -81,7 +81,7 @@ class GuiSquare extends PositionComponent {
         isMine ? humanIcon.codePoint : aiIcon.codePoint,
       ),
       style: TextStyle(
-        fontSize: 30.0 * iconScale, // Scale the font size based on the icon scale
+        fontSize: (GameState.globalOffset / 3) * iconScale, // Scale the font size based on the icon scale
         fontFamily: (isMine ? aiIcon.fontFamily : humanIcon.fontFamily),
         package: isMine ? humanIcon.fontPackage : aiIcon.fontPackage,
         color: isMine ? humanColor : color,
