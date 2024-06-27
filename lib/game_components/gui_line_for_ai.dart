@@ -11,13 +11,38 @@ class GuiLine extends PositionComponent {
   double lineWidth = 2.0;
   double animationProgress = GameState.myTurn ? 0.4 : 0;
 
+  static bool controlBool = false;
+
+  //we are gonna add a different color to the most recently drawn line
+  /*
+  Here is how we are gonna do this:
+  we have a two local booleans and a static bool for the line class
+
+  the two local bools are:
+  imNew and expired
+
+  here is the logic:
+  in the constructor we set the static controlBool to the myTurn in the game state and assign control bool to imNew
+  bool expired = false;
+  then we check if (controlBool && imNew) or (!controlBool && !imNew) then draw new color
+  else draw the old color and set expired to true and draw the old color
+   */
+
+  late bool imNew;
+  bool expired = false;
+
   GuiLine({required this.firstPoint, required this.secondPoint}) {
     priority = 0;
     debugMode = true;
     print('Received points: ${firstPoint.location} and ${secondPoint.location}');
     _calculateLinePositionAndSize();
+    controlBool = GameState.myTurn;
+    imNew = controlBool;
     anchor = Anchor.topLeft;
   }
+
+  final Color newColor = GameState.colorSet[6];
+  final Color oldColor = GameState.colorSet[7];
 
   void _calculateLinePositionAndSize() {
     _start = Offset(firstPoint.xCord * GameState.globalOffset + 60, firstPoint.yCord * GameState.globalOffset + 60);
@@ -43,6 +68,16 @@ class GuiLine extends PositionComponent {
   @override
   void update(double dt) {
     super.update(dt);
+
+    //change the color of line
+    if (!expired) {
+      if ((controlBool && imNew) || (!controlBool && !imNew)) {
+        line.color = newColor;
+      } else {
+        line.color = oldColor;
+        expired = true;
+      }
+    }
 
     // Animate the line drawing
     if (animationProgress < 1.0) {

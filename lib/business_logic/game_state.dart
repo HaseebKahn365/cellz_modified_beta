@@ -23,11 +23,14 @@ class GameState {
     Colors.red, //AI color
 
     Colors.white, //square icon box color //5th index
+
+    Colors.red, //most recent line color //6th index
+    Colors.teal, //old line color //7th index
   ];
 
   static List<IconData> iconSet = [
     Icons.check, //human
-    Icons.close_rounded,
+    Icons.close_rounded, //ai icon
   ];
 
   //a static member for all squares
