@@ -3,7 +3,7 @@ import 'package:cellz_modified_beta/business_logic/point.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
-class GuiLineForAi extends PositionComponent {
+class GuiLine extends PositionComponent {
   final Point firstPoint;
   final Point secondPoint;
   double glowDoubleValue = 0;
@@ -11,7 +11,7 @@ class GuiLineForAi extends PositionComponent {
   double lineWidth = 2.0;
   double animationProgress = GameState.myTurn ? 0.4 : 0;
 
-  GuiLineForAi({required this.firstPoint, required this.secondPoint}) {
+  GuiLine({required this.firstPoint, required this.secondPoint}) {
     priority = 0;
     debugMode = true;
     print('Received points: ${firstPoint.location} and ${secondPoint.location}');
@@ -57,13 +57,13 @@ class GuiLineForAi extends PositionComponent {
 
     // Animate the glow effect
     if (increasingGlow) {
-      glowDoubleValue += 20 * dt;
+      glowDoubleValue += 60 * dt; //the glow speed is adjusted here
       if (glowDoubleValue >= 20) {
         glowDoubleValue = 20;
         increasingGlow = false;
       }
     } else {
-      glowDoubleValue -= 20 * dt;
+      glowDoubleValue -= 60 * dt;
       if (glowDoubleValue <= 0) {
         glowDoubleValue = 0;
         animateLimit--;

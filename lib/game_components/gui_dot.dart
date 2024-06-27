@@ -100,8 +100,8 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks, HasG
                 }
                 // final upLine = GuiLine(center.toOffset(), center.toOffset() - Offset(0, globalOffset));
 
-                // instead of  using the GuiLine object we want to use GuiLineForAi({required this.firstPoint, required this.secondPoint}) {...}
-                final upLine = GuiLineForAi(firstPoint: myPoint, secondPoint: GameState.allPoints[myPoint.location - (GameState.gameCanvas.xPoints)]!);
+                // instead of  using the GuiLine object we want to use GuiLine({required this.firstPoint, required this.secondPoint}) {...}
+                final upLine = GuiLine(firstPoint: myPoint, secondPoint: GameState.allPoints[myPoint.location - (GameState.gameCanvas.xPoints)]!);
 
                 dragIsAllowed = false;
 
@@ -129,7 +129,7 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks, HasG
             if (lineApprover(direction)) {
               // final downLine = GuiLine(center.toOffset(), center.toOffset() + Offset(0, globalOffset));
 
-              // instead of  using the GuiLine object we want to use GuiLineForAi({required this.firstPoint, required this.secondPoint}) {...
+              // instead of  using the GuiLine object we want to use GuiLine({required this.firstPoint, required this.secondPoint}) {...
 
               //adding a vertical down line
 
@@ -141,7 +141,7 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks, HasG
                   print('Down Line is not valid because it either already exists or is not in the valid lines');
                   return;
                 }
-                final downLine = GuiLineForAi(firstPoint: myPoint, secondPoint: GameState.allPoints[myPoint.location + (GameState.gameCanvas.xPoints)]!);
+                final downLine = GuiLine(firstPoint: myPoint, secondPoint: GameState.allPoints[myPoint.location + (GameState.gameCanvas.xPoints)]!);
 
                 dragIsAllowed = false;
 
@@ -168,7 +168,7 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks, HasG
           case LineDirection.left:
             if (lineApprover(direction)) {
               // final leftLine = GuiLine(center.toOffset(), center.toOffset() - Offset(globalOffset, 0));
-              //lets use the GuiLineForAi class instead of the GuiLine class
+              //lets use the GuiLine class instead of the GuiLine class
 
               //adding a horizontal left line
 
@@ -181,7 +181,7 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks, HasG
                   print('this left Line is not valid because it either already exists or is not in the valid lines');
                   return;
                 }
-                final leftLine = GuiLineForAi(firstPoint: myPoint, secondPoint: GameState.allPoints[myPoint.location - 1]!);
+                final leftLine = GuiLine(firstPoint: myPoint, secondPoint: GameState.allPoints[myPoint.location - 1]!);
 
                 dragIsAllowed = false;
 
@@ -213,14 +213,14 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks, HasG
               Point? p2 = GameState.allPoints[myPoint.location + 1];
               if (p2 != null) {
                 // final rightLine = GuiLine(center.toOffset(), center.toOffset() + Offset(globalOffset, 0));
-                //lets use the GuiLineForAi class instead of the GuiLine class
+                //lets use the GuiLine class instead of the GuiLine class
 
                 bool invalid = !GameState.validLines.containsKey(Line(firstPoint: myPoint, secondPoint: p2).toString()) || (GameState.linesDrawn.containsKey(Line(firstPoint: myPoint, secondPoint: p2).toString()));
                 if (invalid) {
                   print('this right Line is not valid because it either already exists or is not in the valid lines');
                   return;
                 }
-                final rightLine = GuiLineForAi(firstPoint: myPoint, secondPoint: GameState.allPoints[myPoint.location + 1]!);
+                final rightLine = GuiLine(firstPoint: myPoint, secondPoint: GameState.allPoints[myPoint.location + 1]!);
 
                 dragIsAllowed = false;
 
