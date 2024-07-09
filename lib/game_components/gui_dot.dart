@@ -48,7 +48,7 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks, HasG
     size = Vector2(0, 0) + Vector2.all(radius * 2); // Set the size of the player
     center = size / 2;
 
-    position = Vector2(myPoint.xCord.toDouble() * globalOffset + 60, myPoint.yCord.toDouble() * globalOffset + 60);
+    position = Vector2((myPoint.xCord.toDouble() * globalOffset) + GameState.offsetFromTopLeftCorner / 2, (myPoint.yCord.toDouble() * globalOffset) + GameState.offsetFromTopLeftCorner / 2); // Set the position of the player
   }
 
   //!static aIFunction instance

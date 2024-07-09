@@ -7,27 +7,38 @@ import 'package:flutter/material.dart';
 
 class MyGame extends FlameGame {
   final int xP, yP;
+
+  final Size screenSize;
   late final TextComponent textComponent;
   //we will create a background rectangle behind all the dots so that the map is visible.
   late final RoundedRectangleComponent backgroundComponent;
 
-  MyGame({required this.xP, required this.yP})
+  MyGame({required this.xP, required this.yP, required this.screenSize})
       : super(
-          camera: CameraComponent.withFixedResolution(width: 1080 / 1.7, height: 1940 / 1.7),
+        // camera: CameraComponent.withFixedResolution(width: 1080 / 1.7, height: 1940 / 1.7),
         ) {
     debugMode = false;
     priority = 0;
     GameState.initGameCanvas(xPoints: xP, yPoints: yP);
   }
 
-  final globalOffsetLocalCopy = GameState.globalOffset; //for improving performance
+  late final double globalOffsetLocalCopy;
 
   @override
   Color backgroundColor() => Colors.black.withOpacity(0);
 
   @override
   FutureOr<void> onLoad() async {
-    //adjust the anchor to the appropriate offset
+    final screenWidth = screenSize.width * 1.2;
+    final screenHeight = screenSize.height;
+    globalOffsetLocalCopy = GameState.globalOffset = (screenWidth / xP).clamp(30, 150);
+
+    // Set camera resolution based on screen size
+    camera = CameraComponent.withFixedResolution(
+      width: screenWidth,
+      height: screenHeight,
+    );
+
     camera.viewfinder.anchor = Anchor.topLeft;
 
     textComponent = TextComponent(
@@ -42,13 +53,19 @@ class MyGame extends FlameGame {
     );
 
     //the rectangle component will have the widthh of no of xpoint  * appropriateOffset.x and height of no of ypoints  * appropriateOffset.y
+    // backgroundComponent = RoundedRectangleComponent(
+    //   size: Vector2(xP * globalOffsetLocalCopy, yP * globalOffsetLocalCopy),
+    //   position: Vector2(0, 0),
+    //   paint: Paint()..color = GameState.colorSet[0].withOpacity(0.4),
+    //   borderRadius: 50,
+    // );
+
     backgroundComponent = RoundedRectangleComponent(
       size: Vector2(xP * globalOffsetLocalCopy, yP * globalOffsetLocalCopy),
       position: Vector2(0, 0),
-      paint: Paint()..color = GameState.colorSet[0].withOpacity(0.5),
-      borderRadius: 50,
+      paint: Paint()..color = Colors.black.withOpacity(0.4),
+      borderRadius: 0,
     );
-
     world.add(backgroundComponent);
 
     world.add(textComponent);
@@ -159,7 +176,7 @@ class RoundedRectangleComponent extends PositionComponent {
   void render(Canvas canvas) {
     super.render(canvas);
     final rect = Rect.fromLTWH(0, 0, size.x, size.y);
-    final rrect = RRect.fromRectAndRadius(rect, Radius.circular(borderRadius));
+    final rrect = RRect.fromRectAndRadius(rect, Radius.circular(0));
     canvas.drawRRect(rrect, paint);
   }
 }

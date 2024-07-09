@@ -1,14 +1,15 @@
 import 'package:cellz_modified_beta/business_logic/game_state.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
+import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
 class GuiSquare extends PositionComponent {
   final bool isMine;
   final Offset offsetFromTopLeftCorner;
   final double animationDuration = 40;
-  final double animationEndSize = 60.0;
-  final double animationStartSize = 12.0;
+  final double animationEndSize = GameState.globalOffset / 2;
+  final double animationStartSize = GameState.globalOffset / 4;
   final myXcord;
   final myYcord;
 
@@ -54,7 +55,10 @@ class GuiSquare extends PositionComponent {
     super.render(canvas);
 
     // Calculate the position offset based on the provided coordinates.. 100 adjusts everything
-    final positionOffset = Offset(myXcord.toDouble() * GameState.globalOffset + (GameState.globalOffset * 1.1), myYcord.toDouble() * GameState.globalOffset + (GameState.globalOffset * 1.1));
+    final positionOffset = Offset(
+      (myXcord.toDouble() * GameState.globalOffset) + (GameState.offsetFromTopLeftCorner * GameState.offsetFactoForSquare),
+      (myYcord.toDouble() * GameState.globalOffset) + GameState.offsetFromTopLeftCorner * GameState.offsetFactoForSquare,
+    );
 
     // Draw the square
     final squarePaint = Paint()

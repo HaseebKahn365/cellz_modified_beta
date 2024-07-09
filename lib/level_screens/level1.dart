@@ -1,3 +1,4 @@
+import 'package:cellz_modified_beta/business_logic/game_state.dart';
 import 'package:cellz_modified_beta/my_game.dart';
 import 'package:cellz_modified_beta/screens.dart/game_play_overlay.dart';
 import 'package:flame/game.dart';
@@ -8,9 +9,12 @@ class Level1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    GameState.offsetFromTopLeftCorner = 50;
+    GameState.offsetFactoForSquare = 1.5;
     final game = MyGame(
-      xP: 5,
-      yP: 10,
+      screenSize: MediaQuery.of(context).size,
+      xP: 7,
+      yP: 12,
     );
 
     return Scaffold(
@@ -20,75 +24,77 @@ class Level1 extends StatelessWidget {
           GamePlayScreen(), //this is just the overlay
 
           Container(padding: const EdgeInsets.only(top: 200), child: GameWidget(game: game)),
-          Positioned(
-            bottom: 40,
-            right: 10,
-            child: Column(
-              children: [
-                FloatingActionButton(
-                  heroTag: null,
-                  onPressed: () async {
-                    await game.zoomIn();
-                  },
-                  child: Icon(Icons.zoom_in),
-                ),
-                const SizedBox(height: 10),
-                GestureDetector(
-                  onLongPress: () async {
-                    print("Long press detected");
-                    await game.resetZoom();
-                  },
-                  child: FloatingActionButton(
-                    heroTag: null,
-                    onPressed: game.zoomOut,
-                    child: Icon(Icons.zoom_out),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Positioned(
-              bottom: 40,
-              left: 10,
-              child: Row(
-                children: [
-                  FloatingActionButton(
-                    heroTag: null,
-                    onPressed: () async {
-                      await game.moveRight();
-                    },
-                    child: Icon(Icons.arrow_back),
-                  ),
-                  const SizedBox(width: 10),
-                  Column(
-                    children: [
-                      FloatingActionButton(
-                        heroTag: null,
-                        onPressed: () async {
-                          await game.moveDown();
-                        }, // Keep this to avoid errors, but the action is handled by long press
-                        child: Icon(Icons.arrow_upward),
-                      ),
-                      const SizedBox(height: 20),
-                      FloatingActionButton(
-                        heroTag: null,
-                        onPressed: () async {
-                          await game.moveUp();
-                        },
-                        child: Icon(Icons.arrow_downward),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(width: 10),
-                  FloatingActionButton(
-                    heroTag: null,
-                    onPressed: () async {
-                      await game.moveLeft();
-                    },
-                    child: Icon(Icons.arrow_forward),
-                  ),
-                ],
-              )),
+          // Positioned(
+          //   bottom: 40,
+          //   right: 10,
+          //   child: Column(
+          //     children: [
+          //       FloatingActionButton(
+          //         heroTag: null,
+          //         onPressed: () async {
+          //           await game.zoomIn();
+          //         },
+          //         child: Icon(Icons.zoom_in),
+          //       ),
+          //       const SizedBox(height: 10),
+          //       GestureDetector(
+          //         onLongPress: () async {
+          //           print("Long press detected");
+          //           await game.resetZoom();
+          //         },
+          //         child: FloatingActionButton(
+          //           heroTag: null,
+          //           onPressed: game.zoomOut,
+          //           child: Icon(Icons.zoom_out),
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
+
+          // Positioned(
+          //   bottom: 40,
+          //   left: 10,
+          //   child: Row(
+          //     children: [
+          //       FloatingActionButton(
+          //         heroTag: null,
+          //         onPressed: () async {
+          //           await game.moveRight();
+          //         },
+          //         child: Icon(Icons.arrow_back),
+          //       ),
+          //       const SizedBox(width: 10),
+          //       Column(
+          //         children: [
+          //           FloatingActionButton(
+          //             heroTag: null,
+          //             onPressed: () async {
+          //               await game.moveDown();
+          //             }, // Keep this to avoid errors, but the action is handled by long press
+          //             child: Icon(Icons.arrow_upward),
+          //           ),
+          //           const SizedBox(height: 20),
+          //           FloatingActionButton(
+          //             heroTag: null,
+          //             onPressed: () async {
+          //               await game.moveUp();
+          //             },
+          //             child: Icon(Icons.arrow_downward),
+          //           ),
+          //         ],
+          //       ),
+          //       const SizedBox(width: 10),
+          //       FloatingActionButton(
+          //         heroTag: null,
+          //         onPressed: () async {
+          //           await game.moveLeft();
+          //         },
+          //         child: Icon(Icons.arrow_forward),
+          //       ),
+          //     ],
+          //   ),
+          // ),
         ],
       ),
     );

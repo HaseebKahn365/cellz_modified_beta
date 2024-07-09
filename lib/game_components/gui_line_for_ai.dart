@@ -45,8 +45,8 @@ class GuiLine extends PositionComponent {
   final Color oldColor = GameState.colorSet[7];
 
   void _calculateLinePositionAndSize() {
-    _start = Offset(firstPoint.xCord * GameState.globalOffset + 60, firstPoint.yCord * GameState.globalOffset + 60);
-    _end = Offset(secondPoint.xCord * GameState.globalOffset + 60, secondPoint.yCord * GameState.globalOffset + 60);
+    _start = Offset(firstPoint.xCord * GameState.globalOffset + GameState.offsetFromTopLeftCorner / 2, firstPoint.yCord * GameState.globalOffset + GameState.offsetFromTopLeftCorner / 2);
+    _end = Offset(secondPoint.xCord * GameState.globalOffset + GameState.offsetFromTopLeftCorner / 2, secondPoint.yCord * GameState.globalOffset + GameState.offsetFromTopLeftCorner / 2);
   }
 
   Offset _start = Offset.zero;
