@@ -45,7 +45,10 @@ class _MyHomePageState extends State<MyHomePage> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => Level1()),
+              MaterialPageRoute(
+                  builder: (context) => Level(
+                        levelNo: 1,
+                      )),
             );
           },
           child: Text('Play Game'),
@@ -76,11 +79,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class GameScreen extends StatelessWidget {
-  const GameScreen({super.key});
+// class GameScreen extends StatelessWidget {
+//   const GameScreen({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(body: Level1());
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(body: Level1());
+//   }
+// }

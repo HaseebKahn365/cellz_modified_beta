@@ -85,7 +85,7 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks, HasG
       dragEnd = event.localStartPosition.toOffset();
 
       //check if the distance between the dragStart and dragEnd is greater than the threshold then draw a line
-      if ((dragEnd! - dragStart!).distance > globalOffset * 1.2) {
+      if ((dragEnd! - dragStart!).distance > globalOffset * 1.1) {
         LineDirection direction = getDirection(dragStart!, dragEnd!);
 
         log('Direction of line is : $direction');
@@ -273,7 +273,7 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks, HasG
     // Check if the AI response is not already running
     if (!isAIResponseRunning) {
       isAIResponseRunning = true; // Set the flag to indicate that the AI response is running more than one dot should not run aiResponses.
-      await aiResponse(); // Call the AI response function
+      await _aiResponse(); // Call the AI response function
       isAIResponseRunning = false; // Reset the flag after the AI response is completed
     }
 
@@ -284,14 +284,14 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks, HasG
 
   //for now we are just gonna use the futures to demo the feature:
 
-  Future<void> aiResponse() async {
+  Future<void> _aiResponse() async {
     print('Ai Function is initiated');
 
     await Future.delayed(const Duration(milliseconds: 300)).then((value) async {
       // aiFunction.testComponentCreation(gameRef);
       if (!GameState.myTurn) {
         try {
-          await aiFunction.buildReadyLines(gameRef);
+          await overridableAiResponse();
           dragIsAllowed = true;
         } catch (e) {
           log('Error in the AI function: $e');
@@ -300,6 +300,10 @@ class Dot extends PositionComponent with DragCallbacks, CollisionCallbacks, HasG
       print('Ai function is done');
       //resetting the controller for the drag event
     });
+  }
+
+  Future<void> overridableAiResponse() async {
+    await aiFunction.buildReadyLines(gameRef);
   }
 
   late double maxRadius = radius * 2; // Maximum dynamic radius

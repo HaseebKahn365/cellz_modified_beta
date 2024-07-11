@@ -63,7 +63,7 @@ class MyGame extends FlameGame {
     backgroundComponent = RoundedRectangleComponent(
       size: Vector2(xP * globalOffsetLocalCopy, yP * globalOffsetLocalCopy),
       position: Vector2(0, 0),
-      paint: Paint()..color = Colors.black.withOpacity(0.4),
+      paint: Paint()..color = Colors.black.withOpacity(0.0),
       borderRadius: 0,
     );
     world.add(backgroundComponent);
