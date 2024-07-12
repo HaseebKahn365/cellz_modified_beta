@@ -13,12 +13,13 @@ class Level extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    GameState.offsetFromTopLeftCorner = 70;
-    GameState.offsetFactoForSquare = 1.27;
+    GameState.offsetFromTopLeftCorner = 40;
+    GameState.offsetFactoForSquare = 1.3;
+
     final game = MyGame(
       screenSize: MediaQuery.of(context).size,
-      xP: 6,
-      yP: 9,
+      xP: 10,
+      yP: 17,
     );
 
     return Scaffold(
