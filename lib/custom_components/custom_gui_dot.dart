@@ -7,17 +7,13 @@ ovrridable aiRespone method so that in future we can use streambuilder with fire
 overridable dot color and line paint color.
  */
 
-import 'dart:developer';
-
-import 'package:cellz_modified_beta/business_logic/game_state.dart';
 import 'package:cellz_modified_beta/business_logic/point.dart';
 import 'package:cellz_modified_beta/game_components/gui_dot.dart';
-import 'package:flame/game.dart';
 
 class CustomGuiDot extends Dot {
   CustomGuiDot({required Point myPoint, double radFactor = 0.13}) : super(myPoint, radFactor: radFactor);
 
-  /*
+  /*d
   Lets override this method which is in the dot to automaticaly make my turn true if it is false
 
    Future<void> overridableAiResponse() async {
@@ -26,11 +22,11 @@ class CustomGuiDot extends Dot {
 
    */
 
-  @override
-  Future<void> overridableAiResponse() async {
-    log("This is the overridableAiResponse method in the customGuiDot class");
-    if (!GameState.myTurn) {
-      GameState.myTurn = true;
-    }
-  }
+  // @override
+  // Future<void> overridableAiResponse() async {
+  //   log("This is the overridableAiResponse method in the customGuiDot class");
+  //   if (!GameState.myTurn) {
+  //     GameState.myTurn = true;
+  //   }
+  // }
 }

@@ -13,12 +13,12 @@ class Level extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    GameState.offsetFromTopLeftCorner = 60;
+    GameState.offsetFromTopLeftCorner = 70;
     GameState.offsetFactoForSquare = 1.27;
     final game = MyGame(
       screenSize: MediaQuery.of(context).size,
-      xP: 7,
-      yP: 11,
+      xP: 6,
+      yP: 9,
     );
 
     return Scaffold(
@@ -195,13 +195,227 @@ GameState.offsetFromTopLeftCorner = 70;
 GameState.offsetFactoForSquare = 1.27;
 
 level 22: 7x4 grid
-Game
+GameState.offsetFromTopLeftCorner = 60;
+GameState.offsetFactoForSquare = 1.27;
+
+level 23: 7x5 grid
+GameState.offsetFromTopLeftCorner = 60;
+GameState.offsetFactoForSquare = 1.27;
+
+level 24: 7x6 grid
+GameState.offsetFromTopLeftCorner = 60;
+GameState.offsetFactoForSquare = 1.27;
+
+level 25: 7x7 grid
+GameState.offsetFromTopLeftCorner = 60;
+GameState.offsetFactoForSquare = 1.27;
+
+level 26: 7x8 grid
+GameState.offsetFromTopLeftCorner = 60;
+GameState.offsetFactoForSquare = 1.27;
+
+level 27: 7x9 grid
+GameState.offsetFromTopLeftCorner = 60;
+GameState.offsetFactoForSquare = 1.27;
+
+level 28: 7x10 grid
+GameState.offsetFromTopLeftCorner = 60;
+GameState.offsetFactoForSquare = 1.27;
+
+level 29: 7x11 grid
+GameState.offsetFromTopLeftCorner = 60;
+GameState.offsetFactoForSquare = 1.27;
+
+
+level 30: 8x4 grid
+GameState.offsetFromTopLeftCorner = 60;
+GameState.offsetFactoForSquare = 1.19;
 
 
 
+level 31: 8x5 grid
+GameState.offsetFromTopLeftCorner = 60;
+GameState.offsetFactoForSquare = 1.19;
 
 
 
+level 32: 8x6 grid
+GameState.offsetFromTopLeftCorner = 60;
+GameState.offsetFactoForSquare = 1.19;
+
+
+
+level 33: 8x7 grid
+GameState.offsetFromTopLeftCorner = 60;
+GameState.offsetFactoForSquare = 1.19;
+
+
+
+level 34: 8x8 grid
+GameState.offsetFromTopLeftCorner = 60;
+GameState.offsetFactoForSquare = 1.19;
+
+
+
+level 35: 8x9 grid
+GameState.offsetFromTopLeftCorner = 60;
+GameState.offsetFactoForSquare = 1.19;
+
+
+
+level 36: 8x10 grid
+GameState.offsetFromTopLeftCorner = 60;
+GameState.offsetFactoForSquare = 1.19;
+
+
+
+level 37: 8x11 grid
+GameState.offsetFromTopLeftCorner = 60;
+GameState.offsetFactoForSquare = 1.19;
+
+
+
+level 38: 8x12 grid
+GameState.offsetFromTopLeftCorner = 60;
+GameState.offsetFactoForSquare = 1.19;
+
+
+
+level 39: 8x13 grid
+GameState.offsetFromTopLeftCorner = 60;
+GameState.offsetFactoForSquare = 1.19;
+
+
+level 40: 9x4 grid
+GameState.offsetFromTopLeftCorner = 50;
+GameState.offsetFactoForSquare = 1.22;
+
+
+level 41: 9x5 grid
+GameState.offsetFromTopLeftCorner = 50;
+GameState.offsetFactoForSquare = 1.22;
+
+
+
+level 42: 9x6 grid
+GameState.offsetFromTopLeftCorner = 50;
+GameState.offsetFactoForSquare = 1.22;
+
+
+level 43: 9x7 grid
+GameState.offsetFromTopLeftCorner = 50;
+GameState.offsetFactoForSquare = 1.22;
+
+
+level 44: 9x8 grid
+GameState.offsetFromTopLeftCorner = 50;
+GameState.offsetFactoForSquare = 1.22;
+
+
+level 45: 9x9 grid
+GameState.offsetFromTopLeftCorner = 50;
+GameState.offsetFactoForSquare = 1.22;
+
+
+level 46: 9x10 grid
+GameState.offsetFromTopLeftCorner = 50;
+GameState.offsetFactoForSquare = 1.22;
+
+
+level 47: 9x11 grid
+GameState.offsetFromTopLeftCorner = 50;
+GameState.offsetFactoForSquare = 1.22;
+
+
+
+level 48: 9x12 grid
+GameState.offsetFromTopLeftCorner = 50;
+GameState.offsetFactoForSquare = 1.22;
+
+
+level 49: 9x13 grid
+GameState.offsetFromTopLeftCorner = 50;
+GameState.offsetFactoForSquare = 1.22;
+
+
+level 50: 9x14 grid
+GameState.offsetFromTopLeftCorner = 50;
+GameState.offsetFactoForSquare = 1.22;
+
+
+level 51: 9x15 grid
+GameState.offsetFromTopLeftCorner = 50;
+GameState.offsetFactoForSquare = 1.22;
+
+
+level 52: 10x4 grid
+GameState.offsetFromTopLeftCorner = 40;
+GameState.offsetFactoForSquare = 1.3;
+
+
+level 53: 10x5 grid
+GameState.offsetFromTopLeftCorner = 40;
+GameState.offsetFactoForSquare = 1.3;
+
+
+level 54: 10x6 grid
+GameState.offsetFromTopLeftCorner = 40;
+GameState.offsetFactoForSquare = 1.3;
+
+
+level 55: 10x7 grid
+GameState.offsetFromTopLeftCorner = 40;
+GameState.offsetFactoForSquare = 1.3;
+
+
+level 56: 10x8 grid
+GameState.offsetFromTopLeftCorner = 40;
+GameState.offsetFactoForSquare = 1.3;
+
+
+level 57: 10x9 grid
+GameState.offsetFromTopLeftCorner = 40;
+GameState.offsetFactoForSquare = 1.3;
+
+
+level 58: 10x10 grid
+GameState.offsetFromTopLeftCorner = 40;
+GameState.offsetFactoForSquare = 1.3;
+
+
+level 59: 10x11 grid
+GameState.offsetFromTopLeftCorner = 40;
+GameState.offsetFactoForSquare = 1.3;
+
+
+level 60: 10x12 grid
+GameState.offsetFromTopLeftCorner = 40;
+GameState.offsetFactoForSquare = 1.3;
+
+
+level 61: 10x13 grid
+GameState.offsetFromTopLeftCorner = 40;
+GameState.offsetFactoForSquare = 1.3;
+
+
+level 62: 10x14 grid
+GameState.offsetFromTopLeftCorner = 40;
+GameState.offsetFactoForSquare = 1.3;
+
+
+level 63: 10x15 grid
+GameState.offsetFromTopLeftCorner = 40;
+GameState.offsetFactoForSquare = 1.3;
+
+
+level 64: 10x16 grid
+GameState.offsetFromTopLeftCorner = 40;
+GameState.offsetFactoForSquare = 1.3;
+
+
+level 65: 10x17 grid
+GameState.offsetFromTopLeftCorner = 40;
+GameState.offsetFactoForSquare = 1.3;
 
 
 
