@@ -71,4 +71,4 @@ class GameStateClass {
   }
 }
 
-GameStateClass GameState = GameStateClass();
+final GameStateClass GameState = GameStateClass();
